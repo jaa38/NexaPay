@@ -1,17 +1,18 @@
 import React from "react";
-import { View, SafeAreaView } from "react-native";
+import { View, Platform, StatusBar } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { theme, spacing } from "../../theme";
 
 /**
- * 📱 Screen Layout Wrapper
- *
- * Ensures consistent spacing & background across all screens
+ * 📱 Cross-Platform Screen Layout
+ * Works perfectly on iOS + Android
  */
 
 export default function Screen({ children, style }) {
   return (
     <SafeAreaView
+      edges={["top", "bottom", "left", "right"]}
       style={{
         flex: 1,
         backgroundColor: theme.background.primary,
@@ -22,7 +23,12 @@ export default function Screen({ children, style }) {
           {
             flex: 1,
             paddingHorizontal: spacing.xxl,
-            paddingTop: spacing.xxl,
+
+            // ✅ Android fix
+            paddingTop:
+              Platform.OS === "android"
+                ? StatusBar.currentHeight + spacing.xxl
+                : spacing.xxl,
           },
           style,
         ]}

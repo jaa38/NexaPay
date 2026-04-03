@@ -1,11 +1,7 @@
-import React from "react";
-import {
-  Pressable,
-  Text as RNText,
-  ActivityIndicator,
-} from "react-native";
+import React from 'react';
+import { Pressable, Text as RNText, ActivityIndicator } from 'react-native';
 
-import { theme, typography, spacing } from "../../theme";
+import { theme, typography, spacing } from '../../theme';
 
 /**
  * 🔘 NexaPay Button (Pressable Version)
@@ -14,7 +10,7 @@ import { theme, typography, spacing } from "../../theme";
 export default function Button({
   title,
   onPress,
-  variant = "primary",
+  variant = 'primary',
   disabled = false,
   loading = false,
   style,
@@ -26,9 +22,9 @@ export default function Button({
       paddingVertical: spacing.md,
       paddingHorizontal: spacing.lg,
       borderRadius: 12,
-      alignItems: "center",
-      justifyContent: "center",
-      flexDirection: "row",
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
     };
 
     if (isDisabled) {
@@ -39,27 +35,35 @@ export default function Button({
     }
 
     switch (variant) {
-      case "secondary":
+      case 'secondary':
         return {
           ...base,
           backgroundColor: pressed
-            ? theme.action.secondary.background + "CC" // slight darken
+            ? theme.action.secondary.background + 'CC' // slight darken
             : theme.action.secondary.background,
         };
 
-      case "ghost":
+      case 'tertiary':
         return {
           ...base,
           backgroundColor: pressed
             ? theme.background.subtle
-            : "transparent",
+            : theme.action.tertiary.background,
+          borderWidth: 1,
+          borderColor: theme.action.tertiary.border,
+        };
+
+      case 'ghost':
+        return {
+          ...base,
+          backgroundColor: pressed ? theme.background.subtle : 'transparent',
         };
 
       default:
         return {
           ...base,
           backgroundColor: pressed
-            ? theme.action.primary.background + "CC"
+            ? theme.action.primary.background + 'CC'
             : theme.action.primary.background,
         };
     }
@@ -69,10 +73,12 @@ export default function Button({
     if (isDisabled) return theme.text.muted;
 
     switch (variant) {
-      case "ghost":
+      case 'ghost':
         return theme.action.primary.background;
-      case "secondary":
+      case 'secondary':
         return theme.action.secondary.text;
+      case 'tertiary':
+        return theme.action.tertiary.text;
       default:
         return theme.action.primary.text;
     }

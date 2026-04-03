@@ -1,5 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 import { useFonts } from 'expo-font';
 import {
   Inter_400Regular,
@@ -7,9 +9,13 @@ import {
   Inter_600SemiBold,
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
-import Button from './src/components/Buttons';
+
+import Screen from './src/components/Layout/Screen';
+import Button from './src/components/Button';
 import Input from './src/components/Input';
 import Card from './src/components/Card';
+
+import { typography, spacing } from './src/theme';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -20,31 +26,45 @@ export default function App() {
   });
 
   if (!fontsLoaded) return null;
+
   return (
-    <View style={styles.container}>
-      <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 24 }}>
-        Open up App.js to start working on your app!
-      </Text>
-      <Button
-        title='Test Button'
-        variant='primary'
-        onPress={() => console.log('Cancel')}
-      />
-      <Input
-        label='Password'
-        placeholder='Enter password'
-        helperText='Must be at least 8 characters'
-      />
-      <StatusBar style='auto' />
-    </View>
+    <SafeAreaProvider>
+      <Screen>
+        <Text style={typography.h2}>NexaPay UI Test</Text>
+
+        <Card style={{ marginTop: spacing.lg }}>
+          <Text style={typography.bodyMedium}>This is a test card</Text>
+        </Card>
+
+        <Input
+          label='Password'
+          placeholder='Enter password'
+          helperText='Must be at least 8 characters'
+          style={{ marginTop: spacing.xs }}
+        />
+
+        <Button
+          title='Test Button'
+          variant='primary'
+          onPress={() => console.log('Pressed')}
+          style={{ marginTop: spacing.lg }}
+        />
+
+        <Button
+          title='Secondary'
+          variant='secondary'
+          style={{ marginTop: spacing.md }}
+        />
+
+        <Button
+          title='Ghost'
+          variant='ghost'
+          style={{ marginTop: spacing.md }}
+        />
+        <Button title='View Details' variant='tertiary' />
+
+        <StatusBar style='dark' />
+      </Screen>
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

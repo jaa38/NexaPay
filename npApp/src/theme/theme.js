@@ -1,6 +1,6 @@
 // theme.js
 
-import { colors } from "./colors";
+import { colors } from './colors';
 
 /**
  * Semantic Theme for React Native
@@ -12,13 +12,13 @@ export const theme = {
     secondary: colors.gray[600],
     muted: colors.gray[500],
     placeholder: colors.gray[400],
-    inverse: "#FFFFFF",
+    inverse: '#FFFFFF',
     link: colors.accent[500],
   },
 
   background: {
     primary: colors.gray[50],
-    surface: "#FFFFFF",
+    surface: '#FFFFFF',
     subtle: colors.gray[100],
     brand: colors.primary[100],
     accent: colors.accent[100],
@@ -34,16 +34,22 @@ export const theme = {
   action: {
     primary: {
       background: colors.primary[600],
-      text: "#FFFFFF",
+      text: '#FFFFFF',
     },
 
     secondary: {
       background: colors.secondary[500],
-      text: "#FFFFFF",
+      text: '#FFFFFF',
+    },
+
+    tertiary: {
+      background: colors.neutral.white,
+      text: colors.primary[600],
+      border: colors.primary[600],
     },
 
     ghost: {
-      background: "transparent",
+      background: 'transparent',
       text: colors.primary[600],
     },
 

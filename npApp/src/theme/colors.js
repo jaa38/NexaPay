@@ -18,11 +18,11 @@ export const colors = {
    * Brand identity — buttons, headers, key actions
    */
   primary: {
-    700: "#141F5C", // Hover / pressed
-    600: "#1E2A78", // Main brand (CTA buttons)
-    500: "#2F3F9E", // Secondary usage
-    400: "#4A5AC4", // Subtle accents
-    100: "#E8ECFF", // Background highlight
+    700: '#141F5C', // Hover / pressed
+    600: '#1E2A78', // Main brand (CTA buttons)
+    500: '#2F3F9E', // Secondary usage
+    400: '#4A5AC4', // Subtle accents
+    100: '#E8ECFF', // Background highlight
   },
 
   /**
@@ -30,10 +30,10 @@ export const colors = {
    * Highlights, active states, alternative CTAs
    */
   secondary: {
-    600: "#5A4EDC", // Hover
-    500: "#6C5CE7", // Active / highlight
-    400: "#8A7FF0", // Light accents
-    100: "#EFEFFD", // Background tint
+    600: '#5A4EDC', // Hover
+    500: '#6C5CE7', // Active / highlight
+    400: '#8A7FF0', // Light accents
+    100: '#EFEFFD', // Background tint
   },
 
   /**
@@ -41,10 +41,10 @@ export const colors = {
    * Links, focus states, interactive highlights
    */
   accent: {
-    600: "#00A8E0", // Hover
-    500: "#00C2FF", // Links / focus
-    400: "#4DD8FF", // Highlights
-    100: "#E6F9FF", // Background tint
+    600: '#00A8E0', // Hover
+    500: '#00C2FF', // Links / focus
+    400: '#4DD8FF', // Highlights
+    100: '#E6F9FF', // Background tint
   },
 
   /**
@@ -52,16 +52,32 @@ export const colors = {
    * Used for text, borders, backgrounds
    */
   gray: {
-    900: "#0F172A", // Primary text
-    800: "#1E293B", // Headings
-    700: "#334155", // Strong text
-    600: "#475569", // Secondary text
-    500: "#64748B", // Labels
-    400: "#94A3B8", // Placeholder
-    300: "#CBD5F5", // Light borders
-    200: "#E2E8F0", // Borders / dividers
-    100: "#F1F5F9", // Surfaces
-    50: "#F8FAFC",  // App background
+    900: '#0F172A', // Primary text
+    800: '#1E293B', // Headings
+    700: '#334155', // Strong text
+    600: '#475569', // Secondary text
+    500: '#64748B', // Labels
+    400: '#94A3B8', // Placeholder
+    300: '#CBD5F5', // Light borders
+    200: '#E2E8F0', // Borders / dividers
+    100: '#F1F5F9', // Surfaces
+    50: '#F8FAFC', // App background
+  },
+
+  /**
+   * ⚪ NEUTRAL (Base Colors)
+   * Core non-semantic colors used across the system.
+   *
+   * ⚠️ These are foundational tokens and should NOT be used directly in components.
+   * Always reference them through semantic tokens in theme.js
+   *
+   * Usage:
+   * - white → backgrounds, cards, surfaces
+   * - black → base text (rare, usually use gray scale instead)
+   */
+  neutral: {
+    white: '#FFFFFF', // Pure white (surfaces, backgrounds)
+    black: '#000000', // Pure black (base text, rarely used directly)
   },
 
   /**
@@ -69,9 +85,9 @@ export const colors = {
    * Positive feedback (payments, confirmations)
    */
   success: {
-    600: "#16A34A", // Strong state
-    500: "#22C55E", // Main success
-    100: "#DCFCE7", // Background
+    600: '#16A34A', // Strong state
+    500: '#22C55E', // Main success
+    100: '#DCFCE7', // Background
   },
 
   /**
@@ -79,9 +95,9 @@ export const colors = {
    * Errors, failed transactions
    */
   error: {
-    600: "#DC2626", // Strong state
-    500: "#EF4444", // Main error
-    100: "#FEE2E2", // Background
+    600: '#DC2626', // Strong state
+    500: '#EF4444', // Main error
+    100: '#FEE2E2', // Background
   },
 
   /**
@@ -89,7 +105,7 @@ export const colors = {
    * Alerts, caution states
    */
   warning: {
-    500: "#F59E0B", // Main warning
-    100: "#FEF3C7", // Background
+    500: '#F59E0B', // Main warning
+    100: '#FEF3C7', // Background
   },
 };

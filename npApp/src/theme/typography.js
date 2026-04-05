@@ -126,6 +126,6 @@ export const typography = {
     fontFamily: fontFamily.medium,
     lineHeight: 20,
     letterSpacing: 0.1,
-    color: theme.text.link,
+    color: theme.action.link.text
   },
 };

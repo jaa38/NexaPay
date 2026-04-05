@@ -3,10 +3,9 @@ import { Pressable, Text, View, Image } from 'react-native';
 import Screen from '../../components/Layout/Screen';
 import { spacing, theme, typography } from '../../theme';
 import Button from '../../components/Button';
-import StepIndicator from '../../components/StepIndicator';
 import Input from '../../components/Input';
 
-export default function Screen1({ navigation }) {
+export default function SignInScreen({ navigation }) {
   return (
     <Screen
       style={{
@@ -22,11 +21,10 @@ export default function Screen1({ navigation }) {
               source={require('../../assets/images/arrow-left.png')}
             />
           </Pressable>
-          <StepIndicator currentStep={1} totalSteps={3} />
         </View>
         <View>
           <Text style={[typography.h1, { textAlign: 'left' }]}>
-            Create your account
+            Welcome Back
           </Text>
           <Text
             style={[
@@ -34,7 +32,7 @@ export default function Screen1({ navigation }) {
               { marginTop: spacing.md, textAlign: 'left' },
             ]}
           >
-            Start accepting payments in minutes
+            Sign in to continue to NexaPay
           </Text>
         </View>
         <View style={{ marginTop: spacing.xl }}>
@@ -49,12 +47,15 @@ export default function Screen1({ navigation }) {
             secureTextEntry
             style={{ marginBottom: spacing.lg }}
           />
-          <Input
-            label='Confirm Password'
-            placeholder='Please confirm your password'
-            secureTextEntry
-            style={{ marginBottom: spacing.lg }} // 16px
-          />
+          <Text
+            style={[
+              typography.link,
+              { marginTop: spacing.md, textAlign: 'right' },
+            ]}
+            // onPress={() => navigation.navigate('Onboarding1')}
+          >
+            Forgot password?
+          </Text>
         </View>
       </View>
 
@@ -66,7 +67,7 @@ export default function Screen1({ navigation }) {
         }}
       >
         <Button
-          title='Create Account'
+          title='Sign In'
           variant='primary'
           fullWidth
           style={{ marginTop: spacing.lg }}
@@ -78,13 +79,16 @@ export default function Screen1({ navigation }) {
             { textAlign: 'center', marginTop: spacing.lg },
           ]}
         >
-          Already have an account?
+          Don't have an account?{' '}
           <Text
-            style={[typography.link]}
-            onPress={() => navigation.navigate('SignIn')}
+            style={typography.link}
+            onPress={() =>
+              navigation.navigate('Onboarding', {
+                screen: 'Onboarding1',
+              })
+            }
           >
-            {' '}
-            Sign In
+            Sign Up
           </Text>
         </Text>
         <Text

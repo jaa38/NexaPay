@@ -56,7 +56,7 @@ export const theme = {
     },
 
     link: {
-      text: colors.accent[500],
+      text: colors.secondary[400],
     },
   },
 

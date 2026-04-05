@@ -1,4 +1,4 @@
-import { theme } from "./theme";
+import { theme } from './theme';
 
 /**
  * 🔤 NexaPay Typography System (React Native)
@@ -9,10 +9,10 @@ import { theme } from "./theme";
 
 // ✅ Central font mapping
 const fontFamily = {
-  regular: "Inter_400Regular",
-  medium: "Inter_500Medium",
-  semibold: "Inter_600SemiBold",
-  bold: "Inter_700Bold",
+  regular: 'Inter_400Regular',
+  medium: 'Inter_500Medium',
+  semibold: 'Inter_600SemiBold',
+  bold: 'Inter_700Bold',
 };
 
 export const typography = {
@@ -45,10 +45,10 @@ export const typography = {
 
   h4: {
     fontSize: 18,
-    fontFamily: fontFamily.medium,
+    fontFamily: fontFamily.semibold,
     lineHeight: 26,
     letterSpacing: -0.1,
-    color: theme.text.secondary,
+    color: theme.text.heading,
   },
 
   /**
@@ -59,7 +59,7 @@ export const typography = {
     fontFamily: fontFamily.regular,
     lineHeight: 24,
     letterSpacing: 0,
-    color: theme.text.primary,
+    color: theme.text.secondary,
   },
 
   bodyMedium: {

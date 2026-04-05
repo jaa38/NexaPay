@@ -8,4 +8,5 @@ export const spacing = {
   xxl: 24, // margin
   xxxl: 32,
   xxxxl: 40,
+  xxxxxl: 48,
 };

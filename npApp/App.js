@@ -16,6 +16,7 @@ import Input from './src/components/Input';
 import Card from './src/components/Card';
 
 import { typography, spacing } from './src/theme';
+import AppNavigator from './src/navigation/AppNavigator';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -29,42 +30,44 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <Screen>
+      {/* <Screen>
         <Text style={typography.h2}>NexaPay UI Test</Text>
 
         <Card style={{ marginTop: spacing.lg }}>
-          <Text style={typography.bodyMedium}>This is a test card</Text>
+          <Text style={typography.bodyMedium}>
+            This is a test card
+          </Text>
         </Card>
 
         <Input
-          label='Password'
-          placeholder='Enter password'
-          helperText='Must be at least 8 characters'
-          style={{ marginTop: spacing.xs }}
-        />
-
-        <Button
-          title='Test Button'
-          variant='primary'
-          onPress={() => console.log('Pressed')}
+          label="Password"
+          placeholder="Enter password"
+          helperText="Must be at least 8 characters"
           style={{ marginTop: spacing.lg }}
         />
 
         <Button
-          title='Secondary'
-          variant='secondary'
+          title="Test Button"
+          variant="primary"
+          onPress={() => console.log("Pressed")}
+          style={{ marginTop: spacing.lg }}
+        />
+
+        <Button
+          title="Secondary"
+          variant="secondary"
           style={{ marginTop: spacing.md }}
         />
 
         <Button
-          title='Ghost'
-          variant='ghost'
+          title="Ghost"
+          variant="ghost"
           style={{ marginTop: spacing.md }}
         />
-        <Button title='View Details' variant='tertiary' />
 
-        <StatusBar style='dark' />
-      </Screen>
+        <StatusBar style="dark" />
+      </Screen> */}
+      <AppNavigator />
     </SafeAreaProvider>
   );
 }

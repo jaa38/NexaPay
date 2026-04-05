@@ -1,12 +1,7 @@
-import React, { useState } from "react";
-import {
-  View,
-  TextInput,
-  Text as RNText,
-  Pressable,
-} from "react-native";
+import React, { useState } from 'react';
+import { View, TextInput, Text as RNText, Pressable } from 'react-native';
 
-import { theme, typography, spacing } from "../../theme";
+import { theme, typography, spacing } from '../../theme';
 
 /**
  * 🧾 NexaPay Input Component
@@ -45,15 +40,10 @@ export default function Input({
   };
 
   return (
-    <View style={{ width: "100%" }}>
+    <View style={{ width: '100%' }}>
       {/* Label */}
       {label && (
-        <RNText
-          style={[
-            typography.inputLabel,
-            { marginBottom: spacing.xs },
-          ]}
-        >
+        <RNText style={[typography.inputLabel, { marginBottom: spacing.xs }]}>
           {label}
         </RNText>
       )}
@@ -97,9 +87,7 @@ export default function Input({
             typography.caption,
             {
               marginTop: spacing.xs,
-              color: error
-                ? theme.state.error.text
-                : theme.text.muted,
+              color: error ? theme.state.error.text : theme.text.muted,
             },
           ]}
         >

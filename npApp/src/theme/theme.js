@@ -9,6 +9,7 @@ export const theme = {
   text: {
     primary: colors.gray[900],
     heading: colors.gray[800],
+    strongText: colors.gray[700],
     secondary: colors.gray[600],
     muted: colors.gray[500],
     placeholder: colors.gray[400],
@@ -38,8 +39,9 @@ export const theme = {
     },
 
     secondary: {
-      background: colors.secondary[500],
+      background: colors.secondary[100],
       text: '#FFFFFF',
+      link: colors.secondary[500],
     },
 
     tertiary: {

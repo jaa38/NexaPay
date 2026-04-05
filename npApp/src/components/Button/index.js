@@ -13,6 +13,7 @@ export default function Button({
   variant = 'primary',
   disabled = false,
   loading = false,
+  fullWidth = false,
   style,
 }) {
   const isDisabled = disabled || loading;
@@ -22,9 +23,11 @@ export default function Button({
       paddingVertical: spacing.md,
       paddingHorizontal: spacing.lg,
       borderRadius: 12,
-      alignItems: 'center',
+      // alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'row',
+      textAlign: 'center',
+      width: fullWidth ? "100%" : "auto",
     };
 
     if (isDisabled) {

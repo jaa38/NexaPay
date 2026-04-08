@@ -23,6 +23,7 @@ export const theme = {
     subtle: colors.gray[100],
     brand: colors.primary[100],
     accent: colors.accent[100],
+    // accent: colors.accent[400],
   },
 
   border: {
@@ -30,6 +31,7 @@ export const theme = {
     light: colors.gray[100],
     strong: colors.gray[300],
     focus: colors.accent[500],
+    accent: colors.accent[400],
   },
 
   action: {

@@ -1,27 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pressable, Text, View, Image } from 'react-native';
 
 import Screen from '../../components/Layout/Screen';
 import { spacing, theme, typography } from '../../theme';
 import Button from '../../components/Button';
-import StepIndicator from '../../components/StepIndicator';
 import Input from '../../components/Input';
 
 import useForm from '../../hooks/useForm';
-import { insertUser, userExists } from '../../database/db';
+import { useAuth } from '../../context/AuthContext';
 
-export default function Screen1({ navigation }) {
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as LocalAuthentication from 'expo-local-authentication';
+
+import { db } from '../../database/db';
+
+export default function SignInScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [serverError, setServerError] = useState('');
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
+
+  const { login } = useAuth();
+
+  // ✅ Check if biometric is enabled
+  useEffect(() => {
+    const checkBiometric = async () => {
+      const enabled = await AsyncStorage.getItem('biometricEnabled');
+      setBiometricEnabled(enabled === 'true');
+    };
+
+    checkBiometric();
+  }, []);
 
   const { values, errors, touched, isValid, handleChange, handleBlur } =
     useForm({
       initialValues: {
         email: '',
         password: '',
-        confirmPassword: '',
       },
-      validate: (field, value, values) => {
+      validate: (field, value) => {
         switch (field) {
           case 'email':
             if (!value.trim()) return 'Email is required';
@@ -31,12 +47,6 @@ export default function Screen1({ navigation }) {
 
           case 'password':
             if (!value) return 'Password is required';
-            if (value.length < 8) return 'Minimum 8 characters';
-            return '';
-
-          case 'confirmPassword':
-            if (!value) return 'Confirm your password';
-            if (value !== values.password) return 'Passwords do not match';
             return '';
 
           default:
@@ -45,37 +55,64 @@ export default function Screen1({ navigation }) {
       },
     });
 
+  // 🔐 Mock API
+  const loginUser = async (email, password) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (email === 'test@mail.com' && password === 'password123') {
+          resolve({ success: true });
+        } else {
+          reject(new Error('Invalid email or password'));
+        }
+      }, 1500);
+    });
+  };
+
+  // 🔐 Email login
   const handleSubmit = async () => {
     if (!isValid || loading) return;
 
     setLoading(true);
-    setErrorMessage('');
+    setServerError('');
 
     try {
-      const exists = await userExists(values.email);
+      await loginUser(values.email, values.password);
 
-      if (exists) {
-        setErrorMessage('Account already exists. Please sign in.');
-        return;
-      }
+      // ✅ Save user globally
+      await login({ email: values.email });
 
-      await insertUser(values.email);
-
-      navigation.navigate('Onboarding2');
+      // ✅ Enable biometric for future
+      db.runSync('INSERT INTO users (email) VALUES (?)', [values.email]);
     } catch (error) {
-      console.log('Signup error:', error);
-      setErrorMessage('Something went wrong. Please try again.');
+      setServerError(error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const getPasswordStrength = (password) => {
-    if (!password) return '';
+  // 🔐 Face ID login
+  const handleBiometricLogin = async () => {
+    try {
+      const hasHardware = await LocalAuthentication.hasHardwareAsync();
+      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
 
-    if (password.length < 6) return 'Weak';
-    if (password.length < 10) return 'Medium';
-    return 'Strong';
+      if (!hasHardware || !isEnrolled) return;
+
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: 'Login with Face ID',
+        fallbackLabel: 'Use Passcode',
+      });
+
+      if (result.success) {
+        const storedUser = await AsyncStorage.getItem('user');
+
+        if (storedUser) {
+          await login(JSON.parse(storedUser));
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -86,7 +123,7 @@ export default function Screen1({ navigation }) {
       }}
     >
       <View style={{ flex: 1 }}>
-        {/* Header */}
+        {/* Back */}
         <View>
           <Pressable onPress={() => navigation.goBack()}>
             <Image
@@ -94,95 +131,78 @@ export default function Screen1({ navigation }) {
               source={require('../../assets/images/arrow-left.png')}
             />
           </Pressable>
-
-          <StepIndicator currentStep={1} totalSteps={3} />
         </View>
 
-        {/* Title */}
+        {/* Header */}
         <View>
           <Text style={[typography.h1, { textAlign: 'left' }]}>
-            Create your account
+            Welcome Back
           </Text>
-
           <Text
             style={[
               typography.bodyLarge,
               { marginTop: spacing.md, textAlign: 'left' },
             ]}
           >
-            Start accepting payments in minutes
+            Sign in to continue to NexaPay
           </Text>
         </View>
 
         {/* Form */}
         <View style={{ marginTop: spacing.xl }}>
           <Input
-            label="Email Address"
-            placeholder="Please enter your email address"
+            label='Email Address'
+            placeholder='Please enter your email address'
             value={values.email}
             onChangeText={(val) => {
-              setErrorMessage('');
+              setServerError('');
               handleChange('email')(val);
             }}
             onBlur={handleBlur('email')}
             error={touched.email ? errors.email : ''}
             success={touched.email && !errors.email}
-            keyboardType="email-address"
-            autoCapitalize="none"
+            keyboardType='email-address'
+            autoCapitalize='none'
             autoCorrect={false}
             style={{ marginBottom: spacing.lg }}
           />
 
           <Input
-            label="Password"
-            showToggle
-            placeholder="Please enter your password"
+            label='Password'
+            placeholder='Please enter your password'
             value={values.password}
             onChangeText={(val) => {
-              setErrorMessage('');
+              setServerError('');
               handleChange('password')(val);
             }}
             onBlur={handleBlur('password')}
             error={touched.password ? errors.password : ''}
             success={touched.password && !errors.password}
             secureTextEntry
+            showToggle
             style={{ marginBottom: spacing.lg }}
           />
 
           <Text
             style={[
-              typography.bodySmall,
-              {
-                color:
-                  getPasswordStrength(values.password) === 'Strong'
-                    ? theme.state.success.text
-                    : theme.state.warning.text,
-                marginTop: spacing.xs,
-              },
+              typography.link,
+              { marginTop: spacing.md, textAlign: 'right' },
             ]}
+            onPress={() => navigation.navigate('ForgotPassword')}
           >
-            {getPasswordStrength(values.password)}
+            Forgot password?
           </Text>
 
-          <Input
-            label="Confirm Password"
-            showToggle
-            placeholder="Please confirm your password"
-            value={values.confirmPassword}
-            onChangeText={(val) => {
-              setErrorMessage('');
-              handleChange('confirmPassword')(val);
-            }}
-            onBlur={handleBlur('confirmPassword')}
-            error={
-              touched.confirmPassword ? errors.confirmPassword : ''
-            }
-            success={
-              touched.confirmPassword && !errors.confirmPassword
-            }
-            secureTextEntry
-            style={{ marginBottom: spacing.lg }}
-          />
+          {/* 🔐 Face ID Button */}
+          {biometricEnabled && (
+            <Button
+              title='Use Face ID'
+              variant='secondary'
+              fullWidth
+              style={{ marginTop: spacing.md }}
+              onPress={handleBiometricLogin}
+            />
+          )}
         </View>
       </View>
 
@@ -194,8 +214,7 @@ export default function Screen1({ navigation }) {
           width: '100%',
         }}
       >
-        {/* Error Message */}
-        {errorMessage ? (
+        {serverError ? (
           <Text
             style={[
               typography.bodySmall,
@@ -206,42 +225,38 @@ export default function Screen1({ navigation }) {
               },
             ]}
           >
-            {errorMessage}
+            {serverError}
           </Text>
         ) : null}
 
-        {/* CTA */}
         <Button
-          title={loading ? 'Creating...' : 'Create Account'}
-          variant="primary"
+          title={loading ? 'Signing in...' : 'Sign In'}
+          variant='primary'
           fullWidth
           disabled={!isValid || loading}
           style={{ marginTop: spacing.lg }}
           onPress={handleSubmit}
         />
 
-        {/* Sign In */}
         <Text
           style={[
             typography.bodyMedium,
             { textAlign: 'center', marginTop: spacing.lg },
           ]}
         >
-          Already have an account?
+          Don't have an account?{' '}
           <Text
             style={typography.link}
             onPress={() =>
-              navigation.navigate('Password', {
-                screen: 'SignIn',
+              navigation.navigate('Onboarding', {
+                screen: 'Onboarding1',
               })
             }
           >
-            {' '}
-            Sign In
+            Sign Up
           </Text>
         </Text>
 
-        {/* Terms */}
         <Text
           style={[
             typography.bodySmall,

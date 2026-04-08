@@ -17,6 +17,12 @@ import Card from './src/components/Card';
 
 import { typography, spacing } from './src/theme';
 import AppNavigator from './src/navigation/AppNavigator';
+import OnboardingSuccessScreen from './src/screens/Onboarding/OnboardingSuccess';
+import ResetPasswordScreen from './src/screens/PasswordNavigation/ChangePassword';
+import { AuthProvider } from './src/context/AuthContext';
+
+import { initDB } from './src/database/db';
+import { useEffect } from 'react';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -26,48 +32,18 @@ export default function App() {
     Inter_700Bold,
   });
 
+  useEffect(() => {
+    initDB();
+  }, []);
+
   if (!fontsLoaded) return null;
 
   return (
     <SafeAreaProvider>
-      {/* <Screen>
-        <Text style={typography.h2}>NexaPay UI Test</Text>
-
-        <Card style={{ marginTop: spacing.lg }}>
-          <Text style={typography.bodyMedium}>
-            This is a test card
-          </Text>
-        </Card>
-
-        <Input
-          label="Password"
-          placeholder="Enter password"
-          helperText="Must be at least 8 characters"
-          style={{ marginTop: spacing.lg }}
-        />
-
-        <Button
-          title="Test Button"
-          variant="primary"
-          onPress={() => console.log("Pressed")}
-          style={{ marginTop: spacing.lg }}
-        />
-
-        <Button
-          title="Secondary"
-          variant="secondary"
-          style={{ marginTop: spacing.md }}
-        />
-
-        <Button
-          title="Ghost"
-          variant="ghost"
-          style={{ marginTop: spacing.md }}
-        />
-
-        <StatusBar style="dark" />
-      </Screen> */}
-      <AppNavigator />
+      <AuthProvider>
+        {/* Main Navigation */}
+        <AppNavigator />
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }

@@ -12,7 +12,7 @@ export default function SplashScreen({ navigation }) {
       navigation.replace('Get Started');
     }, 6000);
     return () => clearTimeout(timer);
-  });
+  }, []);
 
   return (
     <Screen

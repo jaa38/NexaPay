@@ -5,7 +5,7 @@ import { spacing, theme, typography } from '../../theme';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 
-export default function SignInScreen({ navigation }) {
+export default function ChangePasswordScreen({ navigation }) {
   return (
     <Screen
       style={{
@@ -24,7 +24,7 @@ export default function SignInScreen({ navigation }) {
         </View>
         <View>
           <Text style={[typography.h1, { textAlign: 'left' }]}>
-            Welcome Back
+            Reset Password
           </Text>
           <Text
             style={[
@@ -32,7 +32,7 @@ export default function SignInScreen({ navigation }) {
               { marginTop: spacing.md, textAlign: 'left' },
             ]}
           >
-            Sign in to continue to NexaPay
+            Create a new secure password for your account
           </Text>
         </View>
         <View style={{ marginTop: spacing.xl }}>
@@ -47,15 +47,6 @@ export default function SignInScreen({ navigation }) {
             secureTextEntry
             style={{ marginBottom: spacing.lg }}
           />
-          <Text
-            style={[
-              typography.link,
-              { marginTop: spacing.md, textAlign: 'right' },
-            ]}
-            // onPress={() => navigation.navigate('Onboarding1')}
-          >
-            Forgot password?
-          </Text>
         </View>
       </View>
 
@@ -67,11 +58,11 @@ export default function SignInScreen({ navigation }) {
         }}
       >
         <Button
-          title='Sign In'
+          title='Reset Password'
           variant='primary'
           fullWidth
           style={{ marginTop: spacing.lg }}
-          onPress={() => navigation.navigate('Onboarding2')}
+          // onPress={() => navigation.navigate('Onboarding2')}
         />
         <Text
           style={[
@@ -88,18 +79,8 @@ export default function SignInScreen({ navigation }) {
               })
             }
           >
-            Sign Up
+            Sign In
           </Text>
-        </Text>
-        <Text
-          style={[
-            typography.bodySmall,
-            { textAlign: 'center', marginTop: spacing.lg },
-          ]}
-        >
-          By continue, you agree to NexaPay's
-          <Text style={[typography.link]}> Terms</Text> and
-          <Text style={[typography.link]}> Privacy Policy</Text>
         </Text>
       </View>
     </Screen>

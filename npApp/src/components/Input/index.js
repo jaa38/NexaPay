@@ -3,6 +3,8 @@ import { View, TextInput, Text as RNText, Pressable } from 'react-native';
 
 import { theme, typography, spacing } from '../../theme';
 
+import { Ionicons } from '@expo/vector-icons';
+
 /**
  * 🧾 NexaPay Input Component
  *
@@ -11,8 +13,10 @@ import { theme, typography, spacing } from '../../theme';
  * - Placeholder
  * - Focus state
  * - Error state
+ * - Success state
  * - Disabled state
  * - Helper text
+ * - Password toggle (👁️)
  */
 
 export default function Input({
@@ -20,16 +24,21 @@ export default function Input({
   placeholder,
   value,
   onChangeText,
-  error,
   helperText,
   disabled = false,
   style,
+  error,
+  success,
+  showToggle = false,
+  secureTextEntry = false,
   ...props
 }) {
   const [isFocused, setIsFocused] = useState(false);
+  const [secure, setSecure] = useState(secureTextEntry);
 
   const getBorderColor = () => {
     if (error) return theme.state.error.border;
+    if (success) return theme.state.success.border;
     if (isFocused) return theme.border.focus;
     return theme.border.default;
   };
@@ -48,52 +57,98 @@ export default function Input({
         </RNText>
       )}
 
-      {/* Input Field */}
-      <Pressable
-        style={[
-          {
+      {/* Wrapper controls spacing from screen */}
+      <View style={style}>
+        {/* Input Row */}
+        <View
+          style={{
             borderWidth: 1,
             borderColor: getBorderColor(),
             borderRadius: 12,
             backgroundColor: getBackgroundColor(),
             paddingHorizontal: spacing.lg,
             paddingVertical: spacing.md,
-          },
-          style,
-        ]}
-      >
-        <TextInput
-          value={value}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          placeholderTextColor={theme.text.placeholder}
-          editable={!disabled}
-          style={[
-            typography.bodyMedium,
-            {
-              color: theme.text.primary,
-            },
-          ]}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          {...props}
-        />
-      </Pressable>
-
-      {/* Helper / Error Text */}
-      {(error || helperText) && (
-        <RNText
-          style={[
-            typography.caption,
-            {
-              marginTop: spacing.xs,
-              color: error ? theme.state.error.text : theme.text.muted,
-            },
-          ]}
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
         >
-          {error || helperText}
-        </RNText>
-      )}
+          {/* Text Input */}
+          <TextInput
+            value={value}
+            onChangeText={onChangeText}
+            placeholder={placeholder}
+            placeholderTextColor={theme.text.placeholder}
+            editable={!disabled}
+            secureTextEntry={secure}
+            style={[
+              typography.bodyMedium,
+              {
+                color: theme.text.primary,
+                flex: 1,
+              },
+            ]}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            {...props}
+          />
+
+          {/* Toggle Eye Icon */}
+          {showToggle && (
+            <Pressable
+              onPress={() => setSecure((prev) => !prev)}
+              style={({ pressed }) => ({
+                paddingLeft: spacing.sm,
+                opacity: pressed ? 0.5 : 1,
+              })}
+            >
+              <Ionicons
+                name={secure ? 'eye-outline' : 'eye-off-outline'}
+                size={20}
+                color={theme.text.muted}
+              />
+            </Pressable>
+          )}
+        </View>
+
+        {/* Feedback Text: Error / Success / Helper */}
+        {error ? (
+          <RNText
+            style={[
+              typography.caption,
+              {
+                marginTop: spacing.xs, // 4px
+                color: theme.state.error.text,
+              },
+            ]}
+          >
+            {error}
+          </RNText>
+        ) : success ? (
+          <RNText
+            style={[
+              typography.caption,
+              {
+                marginTop: spacing.xs,
+                color: theme.state.success.text,
+              },
+            ]}
+          >
+            Looks good!
+          </RNText>
+        ) : helperText ? (
+          <RNText
+            style={[
+              typography.caption,
+              {
+                marginTop: spacing.xs,
+                color: theme.text.muted,
+              },
+            ]}
+          >
+            {helperText}
+          </RNText>
+        ) : null}
+      </View>
     </View>
   );
 }

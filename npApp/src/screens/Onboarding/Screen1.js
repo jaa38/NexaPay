@@ -8,18 +8,22 @@ import StepIndicator from '../../components/StepIndicator';
 import Input from '../../components/Input';
 
 import useForm from '../../hooks/useForm';
-import { insertUser, userExists } from '../../database/db';
+
+// import { useOnboarding } from '../../context/OnboardingContext';
+import { useOnboarding } from '../../context/OnboardingContext';
 
 export default function Screen1({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const { formData, updateForm } = useOnboarding();
+
   const { values, errors, touched, isValid, handleChange, handleBlur } =
     useForm({
       initialValues: {
-        email: '',
-        password: '',
-        confirmPassword: '',
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.password,
       },
       validate: (field, value, values) => {
         switch (field) {
@@ -45,29 +49,15 @@ export default function Screen1({ navigation }) {
       },
     });
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!isValid || loading) return;
 
-    setLoading(true);
-    setErrorMessage('');
+    updateForm({
+      email: values.email,
+      password: values.password,
+    });
 
-    try {
-      const exists = await userExists(values.email);
-
-      if (exists) {
-        setErrorMessage('Account already exists. Please sign in.');
-        return;
-      }
-
-      await insertUser(values.email);
-
-      navigation.navigate('Onboarding2');
-    } catch (error) {
-      console.log('Signup error:', error);
-      setErrorMessage('Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    navigation.navigate('Onboarding2');
   };
 
   const getPasswordStrength = (password) => {
@@ -117,8 +107,8 @@ export default function Screen1({ navigation }) {
         {/* Form */}
         <View style={{ marginTop: spacing.xl }}>
           <Input
-            label="Email Address"
-            placeholder="Please enter your email address"
+            label='Email Address'
+            placeholder='Please enter your email address'
             value={values.email}
             onChangeText={(val) => {
               setErrorMessage('');
@@ -127,16 +117,16 @@ export default function Screen1({ navigation }) {
             onBlur={handleBlur('email')}
             error={touched.email ? errors.email : ''}
             success={touched.email && !errors.email}
-            keyboardType="email-address"
-            autoCapitalize="none"
+            keyboardType='email-address'
+            autoCapitalize='none'
             autoCorrect={false}
             style={{ marginBottom: spacing.lg }}
           />
 
           <Input
-            label="Password"
+            label='Password'
             showToggle
-            placeholder="Please enter your password"
+            placeholder='Please enter your password'
             value={values.password}
             onChangeText={(val) => {
               setErrorMessage('');
@@ -165,21 +155,17 @@ export default function Screen1({ navigation }) {
           </Text>
 
           <Input
-            label="Confirm Password"
+            label='Confirm Password'
             showToggle
-            placeholder="Please confirm your password"
+            placeholder='Please confirm your password'
             value={values.confirmPassword}
             onChangeText={(val) => {
               setErrorMessage('');
               handleChange('confirmPassword')(val);
             }}
             onBlur={handleBlur('confirmPassword')}
-            error={
-              touched.confirmPassword ? errors.confirmPassword : ''
-            }
-            success={
-              touched.confirmPassword && !errors.confirmPassword
-            }
+            error={touched.confirmPassword ? errors.confirmPassword : ''}
+            success={touched.confirmPassword && !errors.confirmPassword}
             secureTextEntry
             style={{ marginBottom: spacing.lg }}
           />
@@ -213,7 +199,7 @@ export default function Screen1({ navigation }) {
         {/* CTA */}
         <Button
           title={loading ? 'Creating...' : 'Create Account'}
-          variant="primary"
+          variant='primary'
           fullWidth
           disabled={!isValid || loading}
           style={{ marginTop: spacing.lg }}

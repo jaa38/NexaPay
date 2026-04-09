@@ -10,11 +10,6 @@ import {
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
 
-import Screen from './src/components/Layout/Screen';
-import Button from './src/components/Button';
-import Input from './src/components/Input';
-import Card from './src/components/Card';
-
 import { typography, spacing } from './src/theme';
 import AppNavigator from './src/navigation/AppNavigator';
 import OnboardingSuccessScreen from './src/screens/Onboarding/OnboardingSuccess';
@@ -23,6 +18,7 @@ import { AuthProvider } from './src/context/AuthContext';
 
 import { initDB } from './src/database/db';
 import { useEffect } from 'react';
+import { OnboardingProvider } from './src/context/OnboardingContext';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -41,8 +37,10 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        {/* Main Navigation */}
-        <AppNavigator />
+        <OnboardingProvider>
+          {/* Main Navigation */}
+          <AppNavigator />
+        </OnboardingProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );

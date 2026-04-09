@@ -67,11 +67,11 @@ export default function OnboardingSuccessScreen({ navigation }) {
         }}
       >
         <Button
-          title='Go to Dashboard'
+          title="Let's get started"
           variant='primary'
           fullWidth
           style={{ marginTop: spacing.lg }}
-          onPress={() => navigation.navigate('')}
+          onPress={() => navigation.navigate('Home')}
         />
       </View>
     </Screen>

@@ -9,6 +9,7 @@ import PasswordNavigator from './PasswordNavigator';
 import SplashScreen from '../screens/Splash';
 import GetStartedScreen from '../screens/GetStarted';
 import SignInScreen from '../screens/PasswordNavigation';
+import HomeScreen from '../screens/MainApp/Home';
 
 import { useAuth } from '../context/AuthContext';
 
@@ -25,8 +26,8 @@ export default function AppNavigator() {
         // ✅ LOGGED IN FLOW
         <Stack.Navigator>
           <Stack.Screen
-            name='Onboarding'
-            component={OnboardingNavigator}
+            name='Home'
+            component={HomeScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

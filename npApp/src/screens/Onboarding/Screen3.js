@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, Text, View, Image, ScrollView } from 'react-native';
 import Screen from '../../components/Layout/Screen';
 import { spacing, theme, typography } from '../../theme';
@@ -6,7 +6,43 @@ import Button from '../../components/Button';
 import StepIndicator from '../../components/StepIndicator';
 import Input from '../../components/Input';
 
-export default function Screen1({ navigation }) {
+import { insertUser, userExists } from '../../database/db';
+import { useOnboarding } from '../../context/OnboardingContext';
+
+import { useAuth } from '../../context/AuthContext';
+
+export default function Screen3({ navigation }) {
+  const { formData, resetForm } = useOnboarding();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { login } = useAuth();
+
+  const handleComplete = async () => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const exists = await userExists(formData.email);
+
+      if (exists) {
+        setError('Account already exists. Please sign in.');
+        return;
+      }
+
+      await insertUser(formData.email);
+
+      // ✅ Auto login
+      await login({ email: formData.email });
+
+      // ✅ Clear onboarding state
+      resetForm();
+    } catch (err) {
+      setError('Something went wrong');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Screen
       style={{
@@ -110,7 +146,7 @@ export default function Screen1({ navigation }) {
               variant='primary'
               fullWidth
               style={{ marginTop: spacing.lg }}
-              onPress={() => navigation.navigate('Onboarding Success')}
+              onPress={handleComplete}
             />
             <Text style={[typography.bodySmall, { textAlign: 'center' }]}>
               You can update these details anytime in settings

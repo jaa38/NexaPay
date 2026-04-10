@@ -4,12 +4,16 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import OnboardingNavigator from './OnboardingNavigator';
 import PasswordNavigator from './PasswordNavigator';
+import BottomTabs from './BottomTabs';
 
 // screens
 import SplashScreen from '../screens/Splash';
 import GetStartedScreen from '../screens/GetStarted';
 import SignInScreen from '../screens/PasswordNavigation';
+
+// Main App Screens
 import HomeScreen from '../screens/MainApp/Home';
+
 
 import { useAuth } from '../context/AuthContext';
 
@@ -34,6 +38,7 @@ export default function AppNavigator() {
       ) : (
         // ❌ NOT LOGGED IN FLOW
         <Stack.Navigator initialRouteName='Splash'>
+          {/* Auth / Onboarding */}
           <Stack.Screen
             name='Splash'
             component={SplashScreen}
@@ -52,6 +57,13 @@ export default function AppNavigator() {
           <Stack.Screen
             name='Password'
             component={PasswordNavigator}
+            options={{ headerShown: false }}
+          />
+
+          {/* Main App */}
+          <Stack.Screen
+            name='Main'
+            component={BottomTabs}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

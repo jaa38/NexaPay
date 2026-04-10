@@ -8,7 +8,7 @@ import { theme, typography, spacing } from '../../theme';
 
 import BottomTabs from '../../components/BottomTabBar';
 
-export default function HomeScreen() {
+export default function StorefrontScreen() {
   const { user, logout } = useAuth();
 
   return (

@@ -1,41 +1,37 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import Screen from '../../components/Layout/Screen';
-import Button from '../../components/Button';
-import { useAuth } from '../../context/AuthContext';
+import MainScreen from '../../components/Layout/MainScreen';
 import { theme, typography, spacing } from '../../theme';
 
-import BottomTabs from '../../components/BottomTabBar';
-
 export default function PaymentsScreen() {
-  const { user, logout } = useAuth();
+  const insets = useSafeAreaInsets();
 
   return (
-    <Screen
-      style={{
-        flex: 1,
-        backgroundColor: theme.background.primary,
-      }}
-    >
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={typography.h1}>Welcome, User</Text>
-      </View>
-
+    <MainScreen variant="main">
+      {/* 🔵 HEADER */}
       <View
         style={{
-          flexDirection: 'column',
-          marginTop: spacing.xxxxl,
-          width: '100%',
+          backgroundColor: theme.background.statusbar,
+
+          // ✅ safe area spacing stays here (NOT in MainScreen)
+          paddingTop: insets.top,
+
+          paddingBottom: spacing.xl,
+          paddingHorizontal: spacing.xxl,
+          alignItems: 'center',
         }}
       >
-        <Button
-          title='Logout'
-          fullWidth
-          style={{ marginTop: spacing.lg }}
-          onPress={logout}
-        />
+        <Text style={[typography.h2, { color: theme.text.inverse }]}>
+          Create Payment Link
+        </Text>
       </View>
-    </Screen>
+
+      {/* ⚪ BODY */}
+      <View style={{ flex: 1, padding: spacing.xxl }}>
+        <Text>Create Payment Link Screen</Text>
+      </View>
+    </MainScreen>
   );
 }

@@ -34,6 +34,7 @@ export default function Button({
       return {
         ...base,
         backgroundColor: theme.border.default,
+        opacity: 0.5,
       };
     }
 

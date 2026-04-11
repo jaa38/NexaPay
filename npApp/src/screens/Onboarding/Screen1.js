@@ -9,7 +9,6 @@ import Input from '../../components/Input';
 
 import useForm from '../../hooks/useForm';
 
-// import { useOnboarding } from '../../context/OnboardingContext';
 import { useOnboarding } from '../../context/OnboardingContext';
 
 export default function Screen1({ navigation }) {

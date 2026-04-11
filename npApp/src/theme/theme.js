@@ -23,6 +23,7 @@ export const theme = {
     subtle: colors.gray[100],
     brand: colors.primary[100],
     accent: colors.accent[100],
+    statusbar: colors.primary[500]
     // accent: colors.accent[400],
   },
 

@@ -4,7 +4,7 @@ import { View, Text, StatusBar, Platform } from 'react-native';
 import MainScreen from '../../components/Layout/Screen';
 import { theme, typography, spacing } from '../../theme';
 
-export default function PaymentsScreen() {
+export default function ProfileScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: theme.background.primary }}>
       {/* ✅ STATUS BAR (overlay) */}
@@ -24,7 +24,7 @@ export default function PaymentsScreen() {
         }}
       >
         <Text style={[typography.h2, { color: theme.text.inverse }]}>
-          My Storefont
+          My Profile
         </Text>
       </View>
 

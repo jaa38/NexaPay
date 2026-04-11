@@ -14,7 +14,6 @@ import SignInScreen from '../screens/PasswordNavigation';
 // Main App Screens
 import HomeScreen from '../screens/MainApp/Home';
 
-
 import { useAuth } from '../context/AuthContext';
 
 const Stack = createNativeStackNavigator();
@@ -22,52 +21,23 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigator() {
   const { user, loading } = useAuth();
 
-  if (loading) return null;
+  if (loading) return null; // or Splash
 
   return (
     <NavigationContainer>
-      {user ? (
-        // ✅ LOGGED IN FLOW
-        <Stack.Navigator>
-          <Stack.Screen
-            name='Home'
-            component={HomeScreen}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      ) : (
-        // ❌ NOT LOGGED IN FLOW
-        <Stack.Navigator initialRouteName='Splash'>
-          {/* Auth / Onboarding */}
-          <Stack.Screen
-            name='Splash'
-            component={SplashScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name='Get Started'
-            component={GetStartedScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name='Onboarding'
-            component={OnboardingNavigator}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name='Password'
-            component={PasswordNavigator}
-            options={{ headerShown: false }}
-          />
-
-          {/* Main App */}
-          <Stack.Screen
-            name='Main'
-            component={BottomTabs}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      )}
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {user ? (
+          // 🔓 Logged in → Tabs
+          <Stack.Screen name='Main' component={BottomTabs} />
+        ) : (
+          // 🔐 Logged out → go to SignIn flow
+          <>
+            <Stack.Screen name='Password' component={PasswordNavigator} />
+            <Stack.Screen name='GetStarted' component={GetStartedScreen} />
+            <Stack.Screen name='Onboarding' component={OnboardingNavigator} />
+          </>
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

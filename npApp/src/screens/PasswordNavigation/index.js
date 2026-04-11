@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Switch } from 'react';
 import { Pressable, Text, View, Image } from 'react-native';
 
 import Screen from '../../components/Layout/Screen';
@@ -11,8 +11,6 @@ import { useAuth } from '../../context/AuthContext';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as LocalAuthentication from 'expo-local-authentication';
-
-import { db } from '../../database/db';
 
 export default function SignInScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
@@ -81,8 +79,13 @@ export default function SignInScreen({ navigation }) {
       // ✅ Save user globally
       await login({ email: values.email });
 
-      // ✅ Enable biometric for future
-      db.runSync('INSERT INTO users (email) VALUES (?)', [values.email]);
+      await AsyncStorage.setItem(
+        'user',
+        JSON.stringify({ email: values.email }),
+      );
+
+      // ✅ 🚀 ENTER MAIN APP (TABS SHOW HERE)
+      navigation.replace('Main');
     } catch (error) {
       setServerError(error.message);
     } finally {
@@ -103,11 +106,15 @@ export default function SignInScreen({ navigation }) {
         fallbackLabel: 'Use Passcode',
       });
 
+      // ✅ ADD IT RIGHT HERE
       if (result.success) {
         const storedUser = await AsyncStorage.getItem('user');
 
         if (storedUser) {
           await login(JSON.parse(storedUser));
+          navigation.replace('Main');
+        } else {
+          setServerError('No saved account found. Please sign in manually.');
         }
       }
     } catch (error) {
@@ -188,7 +195,11 @@ export default function SignInScreen({ navigation }) {
               typography.link,
               { marginTop: spacing.md, textAlign: 'right' },
             ]}
-            onPress={() => navigation.navigate('ForgotPassword')}
+            onPress={() =>
+              navigation.navigate('Password', {
+                screen: 'ForgotPassword',
+              })
+            }
           >
             Forgot password?
           </Text>
@@ -233,9 +244,8 @@ export default function SignInScreen({ navigation }) {
           title={loading ? 'Signing in...' : 'Sign In'}
           variant='primary'
           fullWidth
-          disabled={!isValid || loading}
           style={{ marginTop: spacing.lg }}
-          onPress={() => navigation.replace('Main')}
+          onPress={handleSubmit}
         />
 
         <Text

@@ -1,41 +1,106 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import Screen from '../../components/Layout/Screen';
-import Button from '../../components/Button';
-import { useAuth } from '../../context/AuthContext';
+import MainScreen from '../../components/Layout/MainScreen';
 import { theme, typography, spacing } from '../../theme';
 
-import BottomTabs from '../../components/BottomTabBar';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
-  const { user, logout } = useAuth();
+  const insets = useSafeAreaInsets(); // 🔥 key
+  const [isHidden, setIsHidden] = useState(false);
+
+  const toggleBalance = () => {
+    setIsHidden(!isHidden);
+  };
 
   return (
-    <Screen
-      style={{
-        flex: 1,
-        backgroundColor: theme.background.primary,
-      }}
-    >
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={typography.h1}>Welcome, User</Text>
-      </View>
-
+    <MainScreen variant='main'>
+      {/* 🔵 HEADER */}
       <View
         style={{
-          flexDirection: 'column',
-          marginTop: spacing.xxxxl,
-          width: '100%',
+          backgroundColor: theme.background.statusbar,
+
+          // ✅ replaces paddingTop: 80
+          paddingTop: insets.top + spacing.xxl,
+
+          paddingBottom: 84,
+          paddingHorizontal: spacing.xxl,
+
+          borderBottomLeftRadius: 48,
+          borderBottomRightRadius: 48,
         }}
       >
-        <Button
-          title='Logout'
-          fullWidth
-          style={{ marginTop: spacing.lg }}
-          onPress={logout}
-        />
+        {/* 👤 Top Row */}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%',
+          }}
+        >
+          <Text
+            style={[typography.h2, { color: theme.text.inverse, width: 261 }]}
+          >
+            Welcome,{'\n'}Jeremiah Akinsowon
+          </Text>
+
+          <View
+            style={{
+              backgroundColor: theme.background.brand,
+              padding: spacing.lg,
+              borderRadius: 999,
+            }}
+          >
+            <Text style={[typography.h2, { color: theme.text.primary }]}>
+              JA
+            </Text>
+          </View>
+        </View>
+
+        {/* 💰 Balance Section */}
+        <View style={{ marginTop: spacing.xxl }}>
+          <View style={{ flexDirection: 'column', gap: spacing.xs }}>
+            <Text style={[typography.label, { color: theme.border.strong }]}>
+              Total Balance
+            </Text>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: spacing.xl,
+                alignItems: 'center',
+              }}
+            >
+              <Text style={[typography.h2, { color: theme.background.brand }]}>
+                {isHidden ? '•••••••' : '₦248,500'}
+              </Text>
+
+              <Pressable onPress={toggleBalance}>
+                <Ionicons
+                  name={isHidden ? 'eye-off-outline' : 'eye-outline'}
+                  size={20}
+                  color={theme.background.brand}
+                />
+              </Pressable>
+            </View>
+
+            <Text
+              style={[
+                typography.label,
+                { color: theme.action.secondary.background },
+              ]}
+            >
+              Available Balance
+            </Text>
+          </View>
+        </View>
       </View>
-    </Screen>
+
+      {/* ⚪ BODY */}
+      <View style={{ flex: 1 }}>{/* content */}</View>
+    </MainScreen>
   );
 }

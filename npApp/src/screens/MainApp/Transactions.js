@@ -1,41 +1,35 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StatusBar, Platform } from 'react-native';
 
-import Screen from '../../components/Layout/Screen';
-import Button from '../../components/Button';
-import { useAuth } from '../../context/AuthContext';
+import MainScreen from '../../components/Layout/Screen';
 import { theme, typography, spacing } from '../../theme';
 
-import BottomTabs from '../../components/BottomTabBar';
-
-export default function TransactionsScreen() {
-  const { user, logout } = useAuth();
-
+export default function PaymentsScreen() {
   return (
-    <Screen
-      style={{
-        flex: 1,
-        backgroundColor: theme.background.primary,
-      }}
-    >
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={typography.h1}>Welcome, User</Text>
-      </View>
+    <View style={{ flex: 1, backgroundColor: theme.background.primary }}>
+      {/* ✅ STATUS BAR (overlay) */}
+      <StatusBar
+        translucent
+        backgroundColor='transparent'
+        barStyle='light-content'
+      />
 
+      {/* 🔵 HEADER (covers status bar + top area) */}
       <View
         style={{
-          flexDirection: 'column',
-          marginTop: spacing.xxxxl,
-          width: '100%',
+          backgroundColor: theme.background.statusbar,
+          paddingTop: 60, // 👈 pushes content below status bar
+          paddingBottom: spacing.xl,
+          alignItems: 'center',
         }}
       >
-        <Button
-          title='Logout'
-          fullWidth
-          style={{ marginTop: spacing.lg }}
-          onPress={logout}
-        />
+        <Text style={[typography.h2, { color: theme.text.inverse }]}>
+          Transactions
+        </Text>
       </View>
-    </Screen>
+
+      {/* ⚪ BODY */}
+      <View style={{ flex: 1 }}>{/* Your main content */}</View>
+    </View>
   );
 }

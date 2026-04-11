@@ -1,25 +1,25 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { getUser } from '../database/db';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ important
+  const [loading, setLoading] = useState(true);
 
-  // 🔄 Load user from SQLite
+  // 🔄 Load user from AsyncStorage (on app start)
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const storedUser = await getUser();
+        const storedUser = await AsyncStorage.getItem('user');
 
         if (storedUser) {
-          setUser(storedUser);
+          setUser(JSON.parse(storedUser));
         }
       } catch (error) {
         console.log('Error loading user:', error);
       } finally {
-        setLoading(false); // ✅ VERY important
+        setLoading(false);
       }
     };
 
@@ -28,12 +28,28 @@ export const AuthProvider = ({ children }) => {
 
   // 🔐 Login
   const login = async (userData) => {
-    setUser(userData);
+    try {
+      // Save to storage
+      await AsyncStorage.setItem('user', JSON.stringify(userData));
+
+      // Update state
+      setUser(userData);
+    } catch (error) {
+      console.log('Login error:', error);
+    }
   };
 
   // 🚪 Logout
   const logout = async () => {
-    setUser(null);
+    try {
+      // Remove from storage
+      await AsyncStorage.removeItem('user');
+
+      // Clear state
+      setUser(null);
+    } catch (error) {
+      console.log('Logout error:', error);
+    }
   };
 
   return (

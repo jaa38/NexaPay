@@ -52,10 +52,10 @@ export default function BottomTabs() {
               label = 'Home';
               break;
             case 'Payments':
-              label = 'Pay';
+              label = 'Payments';
               break;
             case 'Storefront':
-              label = 'Store';
+              label = 'Storefront';
               break;
             case 'Orders':
               label = 'Orders';
@@ -65,7 +65,7 @@ export default function BottomTabs() {
               break;
           }
 
-          return <Text style={[typography.caption, { color }]}>{label}</Text>;
+          return <Text style={[typography.label, { color }]}>{label}</Text>;
         },
 
         /**

@@ -11,6 +11,8 @@ import { useOnboarding } from '../../context/OnboardingContext';
 
 import { useAuth } from '../../context/AuthContext';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function Screen3({ navigation }) {
   const { formData, resetForm } = useOnboarding();
   const [loading, setLoading] = useState(false);
@@ -42,6 +44,7 @@ export default function Screen3({ navigation }) {
       setLoading(false);
     }
   };
+
 
   return (
     <Screen

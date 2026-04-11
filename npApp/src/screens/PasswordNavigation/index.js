@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Switch } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pressable, Text, View, Image } from 'react-native';
 
 import Screen from '../../components/Layout/Screen';
@@ -29,6 +29,7 @@ export default function SignInScreen({ navigation }) {
     checkBiometric();
   }, []);
 
+  // ✅ Form
   const { values, errors, touched, isValid, handleChange, handleBlur } =
     useForm({
       initialValues: {
@@ -76,16 +77,16 @@ export default function SignInScreen({ navigation }) {
     try {
       await loginUser(values.email, values.password);
 
-      // ✅ Save user globally
+      // ✅ Save user globally (THIS drives navigation)
       await login({ email: values.email });
 
+      // ✅ Persist user (for biometric / auto login)
       await AsyncStorage.setItem(
         'user',
-        JSON.stringify({ email: values.email }),
+        JSON.stringify({ email: values.email })
       );
 
-      // ✅ 🚀 ENTER MAIN APP (TABS SHOW HERE)
-      navigation.replace('Main');
+      // ❌ NO navigation here (AppNavigator handles it)
     } catch (error) {
       setServerError(error.message);
     } finally {
@@ -106,13 +107,11 @@ export default function SignInScreen({ navigation }) {
         fallbackLabel: 'Use Passcode',
       });
 
-      // ✅ ADD IT RIGHT HERE
       if (result.success) {
         const storedUser = await AsyncStorage.getItem('user');
 
         if (storedUser) {
-          await login(JSON.parse(storedUser));
-          navigation.replace('Main');
+          await login(JSON.parse(storedUser)); // ✅ triggers navigation
         } else {
           setServerError('No saved account found. Please sign in manually.');
         }
@@ -130,32 +129,27 @@ export default function SignInScreen({ navigation }) {
       }}
     >
       <View style={{ flex: 1 }}>
-        {/* Back */}
-        <View>
-          <Pressable onPress={() => navigation.goBack()}>
-            <Image
-              style={{ marginBottom: spacing.xxl }}
-              source={require('../../assets/images/arrow-left.png')}
-            />
-          </Pressable>
-        </View>
+        {/* 🔙 Back */}
+        <Pressable onPress={() => navigation.goBack()}>
+          <Image
+            style={{ marginBottom: spacing.xxl }}
+            source={require('../../assets/images/arrow-left.png')}
+          />
+        </Pressable>
 
-        {/* Header */}
-        <View>
-          <Text style={[typography.h1, { textAlign: 'left' }]}>
-            Welcome Back
-          </Text>
-          <Text
-            style={[
-              typography.bodyLarge,
-              { marginTop: spacing.md, textAlign: 'left' },
-            ]}
-          >
-            Sign in to continue to NexaPay
-          </Text>
-        </View>
+        {/* 🧾 Header */}
+        <Text style={[typography.h1]}>Welcome Back</Text>
 
-        {/* Form */}
+        <Text
+          style={[
+            typography.bodyLarge,
+            { marginTop: spacing.md },
+          ]}
+        >
+          Sign in to continue to NexaPay
+        </Text>
+
+        {/* 📝 Form */}
         <View style={{ marginTop: spacing.xl }}>
           <Input
             label='Email Address'
@@ -190,6 +184,7 @@ export default function SignInScreen({ navigation }) {
             style={{ marginBottom: spacing.lg }}
           />
 
+          {/* 🔗 Forgot password */}
           <Text
             style={[
               typography.link,
@@ -204,7 +199,7 @@ export default function SignInScreen({ navigation }) {
             Forgot password?
           </Text>
 
-          {/* 🔐 Face ID Button */}
+          {/* 🔐 Biometric */}
           {biometricEnabled && (
             <Button
               title='Use Face ID'
@@ -217,10 +212,9 @@ export default function SignInScreen({ navigation }) {
         </View>
       </View>
 
-      {/* Footer */}
+      {/* 🔻 Footer */}
       <View
         style={{
-          flexDirection: 'column',
           marginTop: spacing.xxxxl,
           width: '100%',
         }}
@@ -244,10 +238,12 @@ export default function SignInScreen({ navigation }) {
           title={loading ? 'Signing in...' : 'Sign In'}
           variant='primary'
           fullWidth
+          disabled={!isValid || loading}
           style={{ marginTop: spacing.lg }}
           onPress={handleSubmit}
         />
 
+        {/* 🔗 Sign up */}
         <Text
           style={[
             typography.bodyMedium,
@@ -267,13 +263,14 @@ export default function SignInScreen({ navigation }) {
           </Text>
         </Text>
 
+        {/* 📜 Terms */}
         <Text
           style={[
             typography.bodySmall,
             { textAlign: 'center', marginTop: spacing.lg },
           ]}
         >
-          By continue, you agree to NexaPay's
+          By continuing, you agree to NexaPay's
           <Text style={typography.link}> Terms</Text> and
           <Text style={typography.link}> Privacy Policy</Text>
         </Text>

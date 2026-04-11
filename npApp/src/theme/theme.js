@@ -35,6 +35,11 @@ export const theme = {
     accent: colors.accent[400],
   },
 
+  sectionui: {
+    surface: '#FFFFFF',
+    border: colors.gray[200],
+  },
+
   action: {
     primary: {
       background: colors.primary[600],

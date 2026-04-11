@@ -1,10 +1,15 @@
 import React from 'react';
-import { Pressable, Text as RNText, ActivityIndicator } from 'react-native';
+import {
+  Pressable,
+  Text as RNText,
+  ActivityIndicator,
+  View,
+} from 'react-native';
 
 import { theme, typography, spacing } from '../../theme';
 
 /**
- * 🔘 NexaPay Button (Pressable Version)
+ * 🔘 NexaPay Button (Enhanced)
  */
 
 export default function Button({
@@ -15,6 +20,10 @@ export default function Button({
   loading = false,
   fullWidth = false,
   style,
+
+  // ✅ NEW
+  leftIcon,
+  rightIcon,
 }) {
   const isDisabled = disabled || loading;
 
@@ -23,11 +32,11 @@ export default function Button({
       paddingVertical: spacing.md,
       paddingHorizontal: spacing.lg,
       borderRadius: 12,
-      // alignItems: 'center',
       justifyContent: 'center',
+      alignItems: 'center',
       flexDirection: 'row',
-      textAlign: 'center',
-      width: fullWidth ? "100%" : "auto",
+      gap: spacing.sm, // 👈 space between icon & text
+      width: fullWidth ? '100%' : 'auto',
     };
 
     if (isDisabled) {
@@ -43,7 +52,7 @@ export default function Button({
         return {
           ...base,
           backgroundColor: pressed
-            ? theme.action.secondary.background + 'CC' // slight darken
+            ? theme.action.secondary.background + 'CC'
             : theme.action.secondary.background,
         };
 
@@ -61,6 +70,15 @@ export default function Button({
         return {
           ...base,
           backgroundColor: pressed ? theme.background.subtle : 'transparent',
+        };
+
+      // ✅ NEW VARIANT
+      case 'quick-action':
+        return {
+          ...base,
+          backgroundColor: pressed
+            ? theme.background.accent // 👈 Accent-100 on press (nice UX)
+            : theme.border.focus, // 👈 Accent-600
         };
 
       default:
@@ -83,6 +101,8 @@ export default function Button({
         return theme.action.secondary.text;
       case 'tertiary':
         return theme.action.tertiary.text;
+      case 'accent':
+        return theme.text.inverse; // 👈 white text
       default:
         return theme.action.primary.text;
     }
@@ -97,16 +117,25 @@ export default function Button({
       {loading ? (
         <ActivityIndicator color={getTextColor()} />
       ) : (
-        <RNText
-          style={[
-            typography.button,
-            {
-              color: getTextColor(),
-            },
-          ]}
-        >
-          {title}
-        </RNText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+          
+          {/* ✅ LEFT ICON */}
+          {leftIcon && leftIcon}
+
+          <RNText
+            style={[
+              typography.button,
+              {
+                color: getTextColor(),
+              },
+            ]}
+          >
+            {title}
+          </RNText>
+
+          {/* ✅ RIGHT ICON */}
+          {rightIcon && rightIcon}
+        </View>
       )}
     </Pressable>
   );

@@ -1,49 +1,48 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, StatusBar, Pressable, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-import MainScreen from '../../components/Layout/MainScreen';
-import { theme, typography, spacing } from '../../theme';
-
 import { Ionicons } from '@expo/vector-icons';
 
-export default function HomeScreen() {
-  const insets = useSafeAreaInsets(); // 🔥 key
+import { theme, typography, spacing } from '../../theme';
+import SectionUICard from '../../components/SectionUI';
+import Button from '../../components/Button';
+
+import TransactionsList from '../../components/Transactions/TransactionList';
+
+export default function HomeScreen({navigation}) {
+  const insets = useSafeAreaInsets();
   const [isHidden, setIsHidden] = useState(false);
 
-  const toggleBalance = () => {
-    setIsHidden(!isHidden);
-  };
-
   return (
-    <MainScreen variant='main'>
-      {/* 🔵 HEADER */}
+    <View style={{ flex: 1, backgroundColor: theme.background.primary }}>
+      {/* STATUS BAR */}
+      <StatusBar
+        translucent
+        backgroundColor='transparent'
+        barStyle='light-content'
+      />
+      {/* HEADER */}
       <View
         style={{
           backgroundColor: theme.background.statusbar,
-
-          // ✅ replaces paddingTop: 80
           paddingTop: insets.top + spacing.xxl,
-
-          paddingBottom: 84,
+          paddingBottom: spacing.xxxxl + insets.bottom,
           paddingHorizontal: spacing.xxl,
 
           borderBottomLeftRadius: 48,
           borderBottomRightRadius: 48,
+          overflow: 'hidden',
         }}
       >
-        {/* 👤 Top Row */}
+        {/* TOP ROW */}
         <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
-            width: '100%',
           }}
         >
-          <Text
-            style={[typography.h2, { color: theme.text.inverse, width: 261 }]}
-          >
+          <Text style={[typography.h2, { color: theme.text.inverse, flex: 1 }]}>
             Welcome,{'\n'}Jeremiah Akinsowon
           </Text>
 
@@ -60,47 +59,106 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* 💰 Balance Section */}
+        {/* BALANCE */}
         <View style={{ marginTop: spacing.xxl }}>
-          <View style={{ flexDirection: 'column', gap: spacing.xs }}>
-            <Text style={[typography.label, { color: theme.border.strong }]}>
-              Total Balance
+          <Text style={[typography.label, { color: theme.border.strong }]}>
+            Total Balance
+          </Text>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: spacing.xs,
+            }}
+          >
+            <Text style={[typography.h2, { color: theme.background.brand }]}>
+              {isHidden ? '•••••••' : '₦248,500'}
             </Text>
 
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: spacing.xl,
-                alignItems: 'center',
-              }}
+            <Pressable
+              onPress={() => setIsHidden(!isHidden)}
+              style={{ marginLeft: spacing.md }}
             >
-              <Text style={[typography.h2, { color: theme.background.brand }]}>
-                {isHidden ? '•••••••' : '₦248,500'}
-              </Text>
-
-              <Pressable onPress={toggleBalance}>
-                <Ionicons
-                  name={isHidden ? 'eye-off-outline' : 'eye-outline'}
-                  size={20}
-                  color={theme.background.brand}
-                />
-              </Pressable>
-            </View>
-
-            <Text
-              style={[
-                typography.label,
-                { color: theme.action.secondary.background },
-              ]}
-            >
-              Available Balance
-            </Text>
+              <Ionicons
+                name={isHidden ? 'eye-off-outline' : 'eye-outline'}
+                size={20}
+                color={theme.background.brand}
+              />
+            </Pressable>
           </View>
+
+          <Text
+            style={[
+              typography.label,
+              {
+                color: theme.action.secondary.background,
+                marginTop: spacing.xs,
+              },
+            ]}
+          >
+            Available Balance
+          </Text>
         </View>
       </View>
 
-      {/* ⚪ BODY */}
-      <View style={{ flex: 1 }}>{/* content */}</View>
-    </MainScreen>
+      {/* FLOATING ACTIONS */}
+      <View
+        style={{
+          marginTop: -spacing.xxxxxl,
+          paddingHorizontal: spacing.xxl,
+          zIndex: 10,
+        }}
+      >
+        <SectionUICard>
+          <View style={{ flexDirection: 'row' }}>
+            <Button
+              title='Create Link'
+              style={{ flex: 1, marginRight: spacing.sm }}
+              leftIcon={<Ionicons name='link-outline' size={18} color='#fff' />}
+            />
+
+            <Button
+              title='Storefront'
+              variant='quick-action'
+              style={{ flex: 1, marginLeft: spacing.sm }}
+              leftIcon={
+                <Ionicons name='storefront-outline' size={18} color='#fff' />
+              }
+            />
+          </View>
+        </SectionUICard>
+      </View>
+
+      {/* BODY */}
+      <View style={{ padding: spacing.xxl }}>
+        {/* RECENT TRANSACTIONS */}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Text style={[typography.h4, { color: theme.text.heading }]}>
+            Recent Transactions
+          </Text>
+          <Text
+            style={[
+              typography.bodySmall,
+              { color: theme.action.secondary.link },
+            ]}
+            onPress={() => navigation.navigate('Transactions')}
+          >
+            View All
+          </Text>
+        </View>
+        <View style={{ marginTop: spacing.xxl, marginBottom: spacing.xxxl }}>
+          <ScrollView>
+            <TransactionsList limit={4} />
+          </ScrollView>
+        </View>
+      </View>
+    </View>
   );
 }

@@ -10,6 +10,7 @@ import BottomTabs from './BottomTabs';
 import SplashScreen from '../screens/Splash';
 import GetStartedScreen from '../screens/GetStarted';
 import SignInScreen from '../screens/PasswordNavigation';
+import ProfileScreen from '../screens/MainApp/ProfileScreen';
 
 // Main App Screens
 import HomeScreen from '../screens/MainApp/Home';

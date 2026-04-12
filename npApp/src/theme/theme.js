@@ -23,7 +23,7 @@ export const theme = {
     subtle: colors.gray[100],
     brand: colors.primary[100],
     accent: colors.accent[100],
-    statusbar: colors.primary[500]
+    statusbar: colors.primary[500],
     // accent: colors.accent[400],
   },
 
@@ -40,6 +40,41 @@ export const theme = {
     border: colors.gray[200],
   },
 
+  icon: {
+    personsalInfo: {
+      background: colors.gray[100],
+      icon: colors.gray[600],
+    },
+    businessInfo: {
+      background: colors.secondary[100],
+      icon: colors.secondary[600],
+    },
+    bankDetails: {
+      background: colors.accent[100],
+      icon: colors.accent[600],
+    },
+    notifications: {
+      background: colors.success[100],
+      icon: colors.success[600],
+    },
+    security: {
+      background: colors.error[100],
+      icon: colors.error[600],
+    },
+    helpSupport: {
+      background: colors.gray[100],
+      icon: colors.gray[600],
+    },
+    settings: {
+      background: colors.gray[100],
+      icon: colors.gray[600],
+    },
+    logout: {
+      background: colors.error[100],
+      icon: colors.error[600],
+    },
+  },
+
   action: {
     primary: {
       background: colors.primary[600],
@@ -50,6 +85,7 @@ export const theme = {
       background: colors.secondary[100],
       text: '#FFFFFF',
       link: colors.secondary[500],
+      icon: colors.secondary[600],
     },
 
     tertiary: {

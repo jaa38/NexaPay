@@ -1,8 +1,8 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-// import { theme } from "../theme";
 import { theme, typography } from '../theme';
 
 // Icons
@@ -14,9 +14,22 @@ import PaymentsScreen from '../screens/MainApp/Payments';
 import StorefrontScreen from '../screens/MainApp/Storefront';
 import OrdersScreen from '../screens/MainApp/Orders';
 import TransactionsScreen from '../screens/MainApp/Transactions';
+import ProfileScreen from '../screens/MainApp/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
 const ICON_SIZE = 24;
+
+// ✅ Home Stack
+function HomeStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name='HomeMain' component={HomeScreen} />
+      <Stack.Screen name='Profile' component={ProfileScreen} />
+    </Stack.Navigator>
+  );
+}
 
 export default function BottomTabs() {
   return (
@@ -24,9 +37,6 @@ export default function BottomTabs() {
       screenOptions={({ route }) => ({
         headerShown: false,
 
-        /**
-         * 🧱 Tab Bar Container
-         */
         tabBarStyle: {
           backgroundColor: theme.background.surface,
           borderTopColor: theme.border.default,
@@ -35,15 +45,9 @@ export default function BottomTabs() {
           paddingTop: 6,
         },
 
-        /**
-         * 🎨 Active / Inactive Colors
-         */
         tabBarActiveTintColor: theme.action.primary.background,
         tabBarInactiveTintColor: theme.text.muted,
 
-        /**
-         * 🔤 Custom Label (uses typography system)
-         */
         tabBarLabel: ({ color }) => {
           let label;
 
@@ -68,9 +72,6 @@ export default function BottomTabs() {
           return <Text style={[typography.label, { color }]}>{label}</Text>;
         },
 
-        /**
-         * 🧭 Icons
-         */
         tabBarIcon: ({ color }) => {
           let Icon;
 
@@ -92,18 +93,26 @@ export default function BottomTabs() {
               break;
           }
 
-          return <Icon size={ICON_SIZE} color={color} />;
+          return <Icon size={24} color={color} />;
         },
       })}
     >
-      <Tab.Screen name='Home' component={HomeScreen} />
+      {/* ✅ FIXED */}
+      <Tab.Screen
+        name='Home'
+        component={HomeStack}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            navigation.navigate('Home', {
+              screen: 'HomeMain',
+            });
+          },
+        })}
+      />
 
       <Tab.Screen name='Payments' component={PaymentsScreen} />
-
       <Tab.Screen name='Storefront' component={StorefrontScreen} />
-
       <Tab.Screen name='Orders' component={OrdersScreen} />
-
       <Tab.Screen name='Transactions' component={TransactionsScreen} />
     </Tab.Navigator>
   );

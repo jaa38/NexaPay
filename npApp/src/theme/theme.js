@@ -73,6 +73,14 @@ export const theme = {
       background: colors.error[100],
       icon: colors.error[600],
     },
+    share: {
+      background: colors.gray[100],
+      icon: colors.gray[600],
+    },
+    copy: {
+      background: colors.gray[100],
+      icon: colors.gray[600],
+    },
   },
 
   action: {
@@ -121,6 +129,43 @@ export const theme = {
       text: colors.warning[500],
       background: colors.warning[100],
       border: colors.warning[500],
+    },
+  },
+
+  card: {
+    /**
+     * 🟢 PAID
+     * Successful payment
+     */
+    paid: {
+      background: colors.success[100],
+      border: colors.success[500],
+      text: colors.success[600],
+      badgeBackground: colors.success[500],
+      badgeText: colors.neutral.white,
+    },
+
+    /**
+     * 🟡 PENDING
+     * Awaiting payment / processing
+     */
+    pending: {
+      background: colors.warning[100],
+      border: colors.warning[500],
+      text: colors.warning[500],
+      badgeBackground: colors.warning[500],
+      badgeText: colors.neutral.white,
+    },
+
+    /**
+     * 🔴 NOT PAID / FAILED
+     */
+    notPaid: {
+      background: colors.error[100],
+      border: colors.error[500],
+      text: colors.error[600],
+      badgeBackground: colors.error[500],
+      badgeText: colors.neutral.white,
     },
   },
 };

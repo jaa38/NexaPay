@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { View, TextInput, Text as RNText, Pressable } from 'react-native';
 
 import { theme, typography, spacing } from '../../theme';
-
 import { Ionicons } from '@expo/vector-icons';
 
 /**
- * 🧾 NexaPay Input Component
+ * 🧾 NexaPay Input Component (Extended)
  *
  * Features:
  * - Label
@@ -17,6 +16,8 @@ import { Ionicons } from '@expo/vector-icons';
  * - Disabled state
  * - Helper text
  * - Password toggle (👁️)
+ * - Currency prefix (₦, $, etc.)
+ * - Multiline (description field)
  */
 
 export default function Input({
@@ -31,11 +32,20 @@ export default function Input({
   success,
   showToggle = false,
   secureTextEntry = false,
+
+  // 🔥 NEW PROPS
+  prefix,
+  multiline = false,
+  keyboardType = 'default',
+
   ...props
 }) {
   const [isFocused, setIsFocused] = useState(false);
   const [secure, setSecure] = useState(secureTextEntry);
 
+  /**
+   * 🎨 Dynamic Styles
+   */
   const getBorderColor = () => {
     if (error) return theme.state.error.border;
     if (success) return theme.state.success.border;
@@ -57,9 +67,9 @@ export default function Input({
         </RNText>
       )}
 
-      {/* Wrapper controls spacing from screen */}
+      {/* Wrapper */}
       <View style={style}>
-        {/* Input Row */}
+        {/* Input Container */}
         <View
           style={{
             borderWidth: 1,
@@ -68,11 +78,27 @@ export default function Input({
             backgroundColor: getBackgroundColor(),
             paddingHorizontal: spacing.lg,
             paddingVertical: spacing.md,
+
             flexDirection: 'row',
-            alignItems: 'center',
+            alignItems: multiline ? 'flex-start' : 'center',
           }}
         >
-          {/* Text Input */}
+          {/* 💰 PREFIX (Currency) */}
+          {prefix && (
+            <RNText
+              style={[
+                typography.bodyMediumSemiBold,
+                {
+                  marginRight: spacing.sm,
+                  color: theme.text.primary,
+                },
+              ]}
+            >
+              {prefix}
+            </RNText>
+          )}
+
+          {/* 🧾 TEXT INPUT */}
           <TextInput
             value={value}
             onChangeText={onChangeText}
@@ -80,11 +106,19 @@ export default function Input({
             placeholderTextColor={theme.text.placeholder}
             editable={!disabled}
             secureTextEntry={secure}
+
+            keyboardType={keyboardType}
+            multiline={multiline}
+
             style={[
               typography.bodyMedium,
               {
                 color: theme.text.primary,
                 flex: 1,
+
+                // 🔥 MULTILINE FIX
+                textAlignVertical: multiline ? 'top' : 'center',
+                height: multiline ? 120 : undefined,
               },
             ]}
             onFocus={() => setIsFocused(true)}
@@ -92,7 +126,7 @@ export default function Input({
             {...props}
           />
 
-          {/* Toggle Eye Icon */}
+          {/* 👁️ PASSWORD TOGGLE */}
           {showToggle && (
             <Pressable
               onPress={() => setSecure((prev) => !prev)}
@@ -110,13 +144,13 @@ export default function Input({
           )}
         </View>
 
-        {/* Feedback Text: Error / Success / Helper */}
+        {/* ⚠️ FEEDBACK TEXT */}
         {error ? (
           <RNText
             style={[
               typography.caption,
               {
-                marginTop: spacing.xs, // 4px
+                marginTop: spacing.xs,
                 color: theme.state.error.text,
               },
             ]}

@@ -19,7 +19,7 @@ export default function PaymentsScreen() {
         style={{
           backgroundColor: theme.background.statusbar,
           paddingTop: 60, // 👈 pushes content below status bar
-          paddingBottom: spacing.xl,
+          paddingBottom: spacing.lg,
           alignItems: 'center',
         }}
       >

@@ -16,6 +16,8 @@ import OrdersScreen from '../screens/MainApp/Orders';
 import TransactionsScreen from '../screens/MainApp/Transactions';
 import ProfileScreen from '../screens/MainApp/ProfileScreen';
 
+import CreatePaymentLinkScreen from '../screens/MainApp/CreatePaymentLinkScreen';
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +29,16 @@ function HomeStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name='HomeMain' component={HomeScreen} />
       <Stack.Screen name='Profile' component={ProfileScreen} />
+    </Stack.Navigator>
+  );
+}
+
+// ✅ Payments Stack
+function PaymentsStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name='PaymentsMain' component={PaymentsScreen} />
+      <Stack.Screen name='CreatePaymentLink' component={CreatePaymentLinkScreen} />
     </Stack.Navigator>
   );
 }
@@ -110,7 +122,7 @@ export default function BottomTabs() {
         })}
       />
 
-      <Tab.Screen name='Payments' component={PaymentsScreen} />
+      <Tab.Screen name='Payments' component={PaymentsStack} />
       <Tab.Screen name='Storefront' component={StorefrontScreen} />
       <Tab.Screen name='Orders' component={OrdersScreen} />
       <Tab.Screen name='Transactions' component={TransactionsScreen} />

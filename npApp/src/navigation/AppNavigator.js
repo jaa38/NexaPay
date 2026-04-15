@@ -16,6 +16,9 @@ import ProfileScreen from '../screens/MainApp/ProfileScreen';
 import HomeScreen from '../screens/MainApp/Home';
 
 import { useAuth } from '../context/AuthContext';
+import { PaymentProvider } from '../context/PaymentContext';
+
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,20 +28,25 @@ export default function AppNavigator() {
   if (loading) return null; // or Splash
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {user ? (
-          // 🔓 Logged in → Tabs
-          <Stack.Screen name='Main' component={BottomTabs} />
-        ) : (
-          // 🔐 Logged out → go to SignIn flow
-          <>
-            <Stack.Screen name='Password' component={PasswordNavigator} />
-            <Stack.Screen name='GetStarted' component={GetStartedScreen} />
-            <Stack.Screen name='Onboarding' component={OnboardingNavigator} />
-          </>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PaymentProvider>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {user ? (
+              <Stack.Screen name='Main' component={BottomTabs} />
+            ) : (
+              <>
+                <Stack.Screen name='Password' component={PasswordNavigator} />
+                <Stack.Screen name='GetStarted' component={GetStartedScreen} />
+                <Stack.Screen
+                  name='Onboarding'
+                  component={OnboardingNavigator}
+                />
+              </>
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PaymentProvider>
+    </GestureHandlerRootView>
   );
 }

@@ -15,12 +15,11 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background.primary }}>
-      
       {/* ✅ STATUS BAR */}
       <StatusBar
         translucent
-        backgroundColor="transparent"
-        barStyle="light-content"
+        backgroundColor='transparent'
+        barStyle='light-content'
       />
 
       {/* 🔥 STICKY STATUS BAR BACKGROUND */}
@@ -64,7 +63,9 @@ export default function HomeScreen({ navigation }) {
               alignItems: 'center',
             }}
           >
-            <Text style={[typography.h2, { color: theme.text.inverse, flex: 1 }]}>
+            <Text
+              style={[typography.h2, { color: theme.text.inverse, flex: 1 }]}
+            >
               Welcome,{'\n'}Jeremiah Akinsowon
             </Text>
 
@@ -137,24 +138,26 @@ export default function HomeScreen({ navigation }) {
           <SectionUICard>
             <View style={{ flexDirection: 'row' }}>
               <Button
-                title="Create Link"
+                title='Create Link'
                 style={{ flex: 1, marginRight: spacing.sm }}
                 leftIcon={
-                  <Ionicons name="link-outline" size={18} color="#fff" />
+                  <Ionicons name='link-outline' size={18} color='#fff' />
+                }
+                onPress={() =>
+                  navigation.navigate('Payments', {
+                    screen: 'CreatePaymentLink',
+                  })
                 }
               />
 
               <Button
-                title="Storefront"
-                variant="quick-action"
+                title='Storefront'
+                variant='quick-action'
                 style={{ flex: 1, marginLeft: spacing.sm }}
                 leftIcon={
-                  <Ionicons
-                    name="storefront-outline"
-                    size={18}
-                    color="#fff"
-                  />
+                  <Ionicons name='storefront-outline' size={18} color='#fff' />
                 }
+                onPress={() => navigation.navigate('Storefront')}
               />
             </View>
           </SectionUICard>

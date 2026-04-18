@@ -31,12 +31,7 @@ export default function UICardStatus({
       />
 
       {/* TEXT */}
-      <Text
-        style={[
-          styles.text,
-          { color: config.text },
-        ]}
-      >
+      <Text style={[styles.text, { color: config.text }]}>
         {label || status.toUpperCase()}
       </Text>
     </View>
@@ -56,6 +51,14 @@ const getStatusConfig = (status) => {
         icon: 'checkmark-circle',
       };
 
+    case 'paid':
+      return {
+        border: theme.state.success.border,
+        background: theme.state.success.background,
+        text: theme.state.success.text,
+        icon: 'checkmark-circle',
+      };
+
     case 'failed':
       return {
         border: theme.state.error.border,
@@ -64,11 +67,27 @@ const getStatusConfig = (status) => {
         icon: 'close-circle',
       };
 
+    case 'processing':
+      return {
+        border: theme.card.processing.border,
+        background: theme.card.processing.background,
+        text: theme.card.processing.text,
+        icon: 'time',
+      };
+
+    case 'completed':
+      return {
+        border: theme.card.completed.border,
+        background: theme.card.completed.background,
+        text: theme.card.completed.text,
+        icon: 'checkmark-circle',
+      };
+
     case 'pending':
     default:
       return {
         border: theme.state.warning.border,
-        background: theme.state.warning.background,
+        background: theme.background.accent,
         text: theme.state.warning.text,
         icon: 'time',
       };

@@ -9,4 +9,7 @@ export const spacing = {
   xxxl: 32,
   xxxxl: 40,
   xxxxxl: 48,
+  xxxxxxl: 56,
+  xxxxxxxl: 64,
+
 };

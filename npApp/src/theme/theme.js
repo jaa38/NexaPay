@@ -167,5 +167,21 @@ export const theme = {
       badgeBackground: colors.error[500],
       badgeText: colors.neutral.white,
     },
+
+    processing: {
+      background: colors.accent[100],
+      border: colors.accent[500],
+      text: colors.accent[600],
+      badgeBackground: colors.accent[500],
+      badgeText: colors.neutral.white,
+    },
+
+    completed: {
+      background: colors.secondary[100],
+      border: colors.secondary[500],
+      text: colors.secondary[600],
+      badgeBackground: colors.secondary[500],
+      badgeText: colors.neutral.white,
+    }
   },
 };

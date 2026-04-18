@@ -1,23 +1,76 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text as RNText, Pressable } from 'react-native';
+import {
+  View,
+  TextInput,
+  Text as RNText,
+  Pressable,
+} from 'react-native';
 
 import { theme, typography, spacing } from '../../theme';
 import { Ionicons } from '@expo/vector-icons';
 
 /**
- * 🧾 NexaPay Input Component (Extended)
+ * 🧾 NexaPay Input Component (Final)
  *
- * Features:
- * - Label
+ * A flexible, design-system-driven input component.
+ *
+ * ----------------------------------------
+ * ✅ FEATURES
+ * ----------------------------------------
+ * - Label support
  * - Placeholder
  * - Focus state
  * - Error state
  * - Success state
  * - Disabled state
- * - Helper text
+ * - Helper / feedback text
  * - Password toggle (👁️)
  * - Currency prefix (₦, $, etc.)
- * - Multiline (description field)
+ * - Multiline (e.g. description input → 120px height)
+ * - Left & Right slots (icons, buttons, loaders, etc.)
+ *
+ * ----------------------------------------
+ * 🧠 DESIGN PRINCIPLE
+ * ----------------------------------------
+ * This is a **base primitive component**.
+ * Do NOT overload it with feature-specific logic (e.g. search).
+ *
+ * Instead:
+ * 👉 Compose it (e.g. SearchBar uses renderLeft/renderRight)
+ *
+ * ----------------------------------------
+ * 🧩 EXTENSIBILITY (IMPORTANT)
+ * ----------------------------------------
+ * renderLeft  → Inject element before input
+ * renderRight → Inject element after input
+ *
+ * Example:
+ * - Search icon
+ * - Clear button
+ * - Loading spinner
+ *
+ * ----------------------------------------
+ * 📏 SPACING SYSTEM
+ * ----------------------------------------
+ * Uses:
+ * 4px → xs
+ * 8px → sm
+ * 16px → md
+ * 24px → lg
+ *
+ * ----------------------------------------
+ * 💡 USAGE EXAMPLES
+ * ----------------------------------------
+ *
+ * 💰 Currency Input:
+ * <Input prefix="₦" keyboardType="numeric" />
+ *
+ * 📝 Description Input:
+ * <Input multiline />
+ *
+ * 🔍 Search Input (via composition):
+ * <Input renderLeft={() => <Icon />} />
+ *
  */
 
 export default function Input({
@@ -33,10 +86,14 @@ export default function Input({
   showToggle = false,
   secureTextEntry = false,
 
-  // 🔥 NEW PROPS
+  // 🔥 EXTENSIONS
   prefix,
   multiline = false,
   keyboardType = 'default',
+
+  // 🔥 COMPOSITION (NEW)
+  renderLeft,
+  renderRight,
 
   ...props
 }) {
@@ -60,22 +117,23 @@ export default function Input({
 
   return (
     <View style={{ width: '100%' }}>
-      {/* Label */}
+      {/* 🏷️ LABEL */}
       {label && (
         <RNText style={[typography.inputLabel, { marginBottom: spacing.xs }]}>
           {label}
         </RNText>
       )}
 
-      {/* Wrapper */}
+      {/* 🧱 WRAPPER */}
       <View style={style}>
-        {/* Input Container */}
+        {/* 📦 INPUT CONTAINER */}
         <View
           style={{
             borderWidth: 1,
             borderColor: getBorderColor(),
             borderRadius: 12,
             backgroundColor: getBackgroundColor(),
+
             paddingHorizontal: spacing.lg,
             paddingVertical: spacing.md,
 
@@ -83,7 +141,14 @@ export default function Input({
             alignItems: multiline ? 'flex-start' : 'center',
           }}
         >
-          {/* 💰 PREFIX (Currency) */}
+          {/* 🔹 LEFT SLOT */}
+          {renderLeft && (
+            <View style={{ marginRight: spacing.sm }}>
+              {renderLeft()}
+            </View>
+          )}
+
+          {/* 💰 PREFIX */}
           {prefix && (
             <RNText
               style={[
@@ -125,6 +190,9 @@ export default function Input({
             onBlur={() => setIsFocused(false)}
             {...props}
           />
+
+          {/* 🔹 RIGHT SLOT */}
+          {renderRight && renderRight()}
 
           {/* 👁️ PASSWORD TOGGLE */}
           {showToggle && (

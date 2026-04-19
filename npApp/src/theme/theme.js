@@ -81,6 +81,10 @@ export const theme = {
       background: colors.gray[100],
       icon: colors.gray[600],
     },
+    withdraw: {
+      background: colors.gray[100],
+      icon: colors.gray[600],
+    },
   },
 
   action: {
@@ -182,6 +186,6 @@ export const theme = {
       text: colors.secondary[600],
       badgeBackground: colors.secondary[500],
       badgeText: colors.neutral.white,
-    }
+    },
   },
 };

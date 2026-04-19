@@ -7,6 +7,7 @@ import { theme, typography } from '../theme';
 
 // Icons
 import { Home, Send, Store, ShoppingBag, Receipt } from 'lucide-react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // Screens
 import HomeScreen from '../screens/MainApp/Home';
@@ -38,7 +39,10 @@ function PaymentsStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name='PaymentsMain' component={PaymentsScreen} />
-      <Stack.Screen name='CreatePaymentLink' component={CreatePaymentLinkScreen} />
+      <Stack.Screen
+        name='CreatePaymentLink'
+        component={CreatePaymentLinkScreen}
+      />
     </Stack.Navigator>
   );
 }
@@ -101,7 +105,9 @@ export default function BottomTabs() {
               Icon = ShoppingBag;
               break;
             case 'Transactions':
-              Icon = Receipt;
+              Icon = (props) => (
+                <MaterialCommunityIcons name='currency-ngn' {...props} />
+              );
               break;
           }
 

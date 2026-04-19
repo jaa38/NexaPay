@@ -8,7 +8,7 @@ import { theme, spacing } from '../../theme';
 export default function SearchBar({
   value,
   onChangeText,
-  placeholder = 'Search...',
+  placeholder = 'Search',
   onClear,
 }) {
   return (
@@ -17,13 +17,8 @@ export default function SearchBar({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
+        style={{ marginBottom: 0 }}
 
-        // 🔥 Override Input styling slightly
-        style={{
-          marginBottom: 0,
-        }}
-
-        // 👇 Inject custom left + right elements
         renderLeft={() => (
           <Ionicons
             name="search-outline"
@@ -37,6 +32,7 @@ export default function SearchBar({
           value ? (
             <Pressable
               onPress={onClear}
+              hitSlop={10}
               style={({ pressed }) => ({
                 paddingLeft: spacing.sm,
                 opacity: pressed ? 0.5 : 1,

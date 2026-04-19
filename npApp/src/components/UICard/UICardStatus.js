@@ -86,9 +86,9 @@ const getStatusConfig = (status) => {
     case 'pending':
     default:
       return {
-        border: theme.state.warning.border,
-        background: theme.background.accent,
-        text: theme.state.warning.text,
+        border: theme.card.pending.border,
+        background: theme.card.pending.background,
+        text: theme.card.pending.text,
         icon: 'time',
       };
   }

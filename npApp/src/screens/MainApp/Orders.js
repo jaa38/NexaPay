@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StatusBar, FlatList } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
+
+import DefaultScreenLayout from '../../components/Layout/DefaultScreenLayout';
 
 import { theme, typography, spacing } from '../../theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,35 +12,44 @@ import SearchBar from '../../components/Input/SearchBar';
 import UICardStatus from '../../components/UICard/UICardStatus';
 
 import { Ionicons } from '@expo/vector-icons';
-import { orders } from '../../data/orders';
+import { fetchOrders } from '../../api/orders';
 
 export default function OrdersScreen() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
 
-  const insets = useSafeAreaInsets();
-
+  const [orders, setOrders] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-
   const [loading, setLoading] = useState(true);
 
+  const insets = useSafeAreaInsets();
+
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-  });
+    const loadOrders = async () => {
+      try {
+        const data = await fetchOrders();
+        setOrders(data);
+      } catch (error) {
+        console.log('Error fetching orders:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Loading orders...</Text>
-      </View>
-    );
-  }
+    loadOrders();
+  }, []);
 
-  const handleFilterChange = (value) => {
-    setFilter(value)
-  }
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const data = await fetchOrders();
+      setOrders(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch = order.title
@@ -50,15 +61,23 @@ export default function OrdersScreen() {
     return matchesSearch && matchesFilter;
   });
 
-  const onRefresh = () => {
-    setRefreshing(true);
+  const handleFilterChange = (value) => setFilter(value);
 
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1500);
-  };
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.background.primary,
+        }}
+      >
+        <Text>Loading orders...</Text>
+      </View>
+    );
+  }
 
-  // 🔁 Render each order item
   const renderOrder = ({ item }) => (
     <View
       style={{
@@ -68,7 +87,6 @@ export default function OrdersScreen() {
       }}
     >
       <SectionUICard>
-        {/* HEADER */}
         <View
           style={{
             flexDirection: 'row',
@@ -77,14 +95,7 @@ export default function OrdersScreen() {
           }}
         >
           <View style={{ gap: spacing.xs }}>
-            <Text
-              style={[
-                typography.bodyLargeSemiBold,
-                { color: theme.text.primary },
-              ]}
-            >
-              {item.title}
-            </Text>
+            <Text style={typography.bodyLargeSemiBold}>{item.title}</Text>
 
             <Text style={[typography.bodySmall, { color: theme.text.muted }]}>
               {item.orderId}
@@ -98,7 +109,6 @@ export default function OrdersScreen() {
           />
         </View>
 
-        {/* AMOUNT + STATUS */}
         <View
           style={{
             flexDirection: 'row',
@@ -106,14 +116,11 @@ export default function OrdersScreen() {
             marginTop: spacing.lg,
           }}
         >
-          <Text style={[typography.h3, { color: theme.text.primary }]}>
-            ₦{item.amount.toLocaleString()}
-          </Text>
+          <Text style={typography.h3}>₦{item.amount.toLocaleString()}</Text>
 
           <UICardStatus status={item.status} />
         </View>
 
-        {/* META */}
         <View
           style={{
             flexDirection: 'row',
@@ -121,37 +128,42 @@ export default function OrdersScreen() {
             marginTop: spacing.lg,
           }}
         >
-          <Text style={[typography.bodySmallSemiBold]}>{item.items} items</Text>
+          <Text style={typography.bodySmallSemiBold}>{item.items} items</Text>
 
-          <Text style={[typography.bodySmallSemiBold]}>{item.date}</Text>
+          <Text style={typography.bodySmallSemiBold}>{item.date}</Text>
         </View>
       </SectionUICard>
     </View>
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.background.primary }}>
-      {/* STATUS BAR */}
-      <StatusBar
-        translucent
-        backgroundColor='transparent'
-        barStyle='light-content'
-      />
-
-      {/* STATUS BAR BACKGROUND */}
-      <View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: insets.top,
-          backgroundColor: theme.background.statusbar,
-          zIndex: 100,
-        }}
-      />
-
-      {/* MAIN FLATLIST */}
+    <DefaultScreenLayout
+      title='Orders'
+      subtitle='Manage your Customer orders'
+      stats={
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+          }}
+        >
+          <Stat label='Total' value={filteredOrders.length} />
+          <Stat
+            label='Pending'
+            value={orders.filter((o) => o.status === 'pending').length}
+          />
+          <Stat
+            label='Processing'
+            value={orders.filter((o) => o.status === 'processing').length}
+          />
+          <Stat
+            label='Completed'
+            value={orders.filter((o) => o.status === 'completed').length}
+          />
+        </View>
+      }
+    >
       <FlatList
         data={filteredOrders}
         keyExtractor={(item) => item.id}
@@ -159,152 +171,12 @@ export default function OrdersScreen() {
         showsVerticalScrollIndicator={false}
         onRefresh={onRefresh}
         refreshing={refreshing}
-        ListEmptyComponent={
-          <View
-            style={{
-              padding: spacing.xxl,
-              alignItems: 'center',
-            }}
-          >
-            <Text style={[typography.bodyMedium, { color: theme.text.muted }]}>
-              No orders found
-            </Text>
-          </View>
-        }
+        contentContainerStyle={{
+          paddingTop: spacing.lg,
+          paddingBottom: insets.bottom + spacing.xl,
+        }}
         ListHeaderComponent={
           <>
-            {/* HEADER */}
-            <View
-              style={{
-                backgroundColor: theme.background.statusbar,
-                paddingTop: insets.top + spacing.xl,
-                paddingBottom: spacing.xxxxxxxl,
-                paddingHorizontal: spacing.xxl,
-              }}
-            >
-              <Text style={[typography.h2, { color: theme.text.inverse }]}>
-                Orders
-              </Text>
-
-              <Text
-                style={[typography.bodyMedium, { color: theme.text.inverse }]}
-              >
-                Manage your Customer orders
-              </Text>
-            </View>
-
-            {/* STATS */}
-            <View
-              style={{
-                marginTop: -spacing.xxxxl,
-                paddingHorizontal: spacing.xxl,
-                zIndex: 10,
-              }}
-            >
-              <SectionUICard>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-evenly',
-                    alignItems: 'center',
-                  }}
-                >
-                  {/* Total */}
-                  <View style={{ alignItems: 'center' }}>
-                    <Text
-                      style={[
-                        typography.bodySmall,
-                        { color: theme.text.secondary },
-                      ]}
-                    >
-                      Total
-                    </Text>
-                    <Text
-                      style={[typography.h4, { color: theme.text.primary }]}
-                    >
-                      {filteredOrders.length}
-                    </Text>
-                  </View>
-
-                  <View
-                    style={{
-                      width: 1,
-                      height: 40,
-                      backgroundColor: theme.border.default,
-                    }}
-                  />
-
-                  {/* Pending */}
-                  <View style={{ alignItems: 'center' }}>
-                    <Text
-                      style={[
-                        typography.bodySmall,
-                        { color: theme.text.secondary },
-                      ]}
-                    >
-                      Pending
-                    </Text>
-                    <Text
-                      style={[typography.h4, { color: theme.text.strongText }]}
-                    >
-                      {orders.filter((o) => o.status === 'pending').length}
-                    </Text>
-                  </View>
-
-                  <View
-                    style={{
-                      width: 1,
-                      height: 40,
-                      backgroundColor: theme.border.default,
-                    }}
-                  />
-
-                  {/* Processing */}
-                  <View style={{ alignItems: 'center' }}>
-                    <Text
-                      style={[
-                        typography.bodySmall,
-                        { color: theme.text.secondary },
-                      ]}
-                    >
-                      Processing
-                    </Text>
-                    <Text style={[typography.h4, { color: theme.text.link }]}>
-                      {orders.filter((o) => o.status === 'processing').length}
-                    </Text>
-                  </View>
-
-                  <View
-                    style={{
-                      width: 1,
-                      height: 40,
-                      backgroundColor: theme.border.default,
-                    }}
-                  />
-
-                  {/* Completed */}
-                  <View style={{ alignItems: 'center' }}>
-                    <Text
-                      style={[
-                        typography.bodySmall,
-                        { color: theme.text.secondary },
-                      ]}
-                    >
-                      Completed
-                    </Text>
-                    <Text
-                      style={[
-                        typography.h4,
-                        { color: theme.action.secondary.link },
-                      ]}
-                    >
-                      {orders.filter((o) => o.status === 'completed').length}
-                    </Text>
-                  </View>
-                </View>
-              </SectionUICard>
-            </View>
-
             {/* SEARCH */}
             <View style={{ padding: spacing.xxl }}>
               <SearchBar
@@ -353,23 +225,26 @@ export default function OrdersScreen() {
                 justifyContent: 'space-between',
               }}
             >
-              <Text style={[typography.h4, { color: theme.text.primary }]}>
-                All Orders
-              </Text>
-
-              <Text
-                style={[typography.bodySmall, { color: theme.text.secondary }]}
-              >
-                {orders.length} orders
+              <Text style={typography.h4}>All Orders</Text>
+              <Text style={typography.bodySmall}>
+                {filteredOrders.length} orders
               </Text>
             </View>
           </>
         }
-        contentContainerStyle={{
-          paddingTop: spacing.lg,
-          paddingBottom: spacing.lg,
-        }}
+        ListEmptyComponent={
+          <View style={{ padding: spacing.xxl, alignItems: 'center' }}>
+            <Text style={{ color: theme.text.muted }}>No orders found</Text>
+          </View>
+        }
       />
-    </View>
+    </DefaultScreenLayout>
   );
 }
+
+const Stat = ({ label, value }) => (
+  <View style={{ alignItems: 'center' }}>
+    <Text style={{ fontSize: 12, color: '#6B7280' }}>{label}</Text>
+    <Text style={{ fontSize: 16, fontWeight: '600' }}>{value}</Text>
+  </View>
+);

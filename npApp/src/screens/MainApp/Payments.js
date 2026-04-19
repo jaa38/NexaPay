@@ -7,10 +7,10 @@ import {
   ToastAndroid,
   Alert,
   Share,
-  StatusBar,
-  ScrollView,
+  FlatList,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import DefaultScreenLayout from '../../components/Layout/DefaultScreenLayout';
 
 import { theme, typography, spacing } from '../../theme';
 import SectionUICard from '../../components/SectionUI';
@@ -24,15 +24,13 @@ import { usePayments } from '../../context/PaymentContext';
 import SwipeablePaymentCard from '../../components/SwipeablePaymentCard';
 
 export default function PaymentsScreen({ navigation }) {
-  const insets = useSafeAreaInsets();
   const [selected, setSelected] = useState('All');
 
   const filters = ['All', 'Paid', 'Pending', 'Failed'];
 
-  // ✅ Get payments FIRST
   const { payments, deletePayment } = usePayments();
 
-  // 📋 COPY
+  // COPY
   const handleCopy = async (link) => {
     await Clipboard.setStringAsync(link);
 
@@ -43,7 +41,7 @@ export default function PaymentsScreen({ navigation }) {
     }
   };
 
-  // 📤 SHARE
+  // SHARE
   const handleShare = async (link) => {
     try {
       await Share.share({
@@ -54,7 +52,7 @@ export default function PaymentsScreen({ navigation }) {
     }
   };
 
-  // ✅ FILTER LOGIC (safe)
+  // FILTER
   const filteredPayments =
     selected === 'All'
       ? payments
@@ -65,300 +63,196 @@ export default function PaymentsScreen({ navigation }) {
           return false;
         });
 
-  // 💰 FORMAT
   const formatCurrency = (amount) => `₦${amount.toLocaleString()}`;
 
-  return (
-    <View style={{ flex: 1, backgroundColor: theme.background.primary }}>
-      {/* STATUS BAR */}
-      <StatusBar
-        translucent
-        backgroundColor='transparent'
-        barStyle='light-content'
-      />
-
-      {/* STICKY STATUS BAR BACKGROUND */}
-      <View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: insets.top,
-          backgroundColor: theme.background.statusbar,
-          zIndex: 100,
-        }}
-      />
-
-      {/* SCROLLABLE CONTENT */}
-      <ScrollView
-        style={{ flex: 1 }}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
-        {/* HEADER */}
+  // ✅ Render Item
+  const renderItem = ({ item }) => (
+    <SwipeablePaymentCard
+      onDelete={() => {
+        Alert.alert(
+          'Delete Payment',
+          'Are you sure you want to delete this payment link?',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Delete',
+              style: 'destructive',
+              onPress: () => deletePayment(item.id),
+            },
+          ],
+        );
+      }}
+    >
+      <SectionUICard>
+        {/* TOP */}
         <View
           style={{
-            backgroundColor: theme.background.statusbar,
-            paddingTop: insets.top + spacing.xl,
-            paddingBottom: spacing.xxxxl + insets.bottom,
-            paddingHorizontal: spacing.xxl,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
-          <Text style={[typography.h2, { color: theme.text.inverse }]}>
-            Payment Link
-          </Text>
-        </View>
+          <View style={{ gap: spacing.xs }}>
+            <Text
+              style={[
+                typography.bodyLargeSemiBold,
+                { color: theme.text.primary },
+              ]}
+            >
+              {item.title}
+            </Text>
 
-        {/* STATS CARD (still static for now) */}
-        <View
-          style={{
-            marginTop: -spacing.xxxxxl,
-            paddingHorizontal: spacing.xxl,
-            zIndex: 10,
-          }}
-        >
-          <SectionUICard>
-            <View
+            <Text
+              style={[typography.bodySmall, { color: theme.text.secondary }]}
+            >
+              {item.date}
+            </Text>
+          </View>
+
+          {/* ACTIONS */}
+          <View style={{ flexDirection: 'row', gap: spacing.md }}>
+            <Pressable
+              onPress={() => handleCopy(item.link)}
               style={{
-                flexDirection: 'row',
-                justifyContent: 'space-evenly',
-                alignItems: 'center',
+                backgroundColor: theme.icon.copy.background,
+                padding: spacing.md,
+                borderRadius: 999,
               }}
             >
-              <View style={{ alignItems: 'center' }}>
-                <Text style={[typography.h4, { color: theme.text.primary }]}>
-                  {payments.length}
-                </Text>
-                <Text
-                  style={[
-                    typography.bodySmall,
-                    { color: theme.text.secondary },
-                  ]}
-                >
-                  Total Sent
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  width: 1,
-                  height: 40,
-                  backgroundColor: theme.border.default,
-                }}
+              <Ionicons
+                name='copy-outline'
+                size={20}
+                color={theme.icon.copy.icon}
               />
+            </Pressable>
 
-              <View style={{ alignItems: 'center' }}>
-                <Text style={[typography.h4, { color: theme.text.primary }]}>
-                  {payments.filter((p) => p.status === 'success').length}
-                </Text>
-                <Text
-                  style={[
-                    typography.bodySmall,
-                    { color: theme.text.secondary },
-                  ]}
-                >
-                  Paid
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  width: 1,
-                  height: 40,
-                  backgroundColor: theme.border.default,
-                }}
+            <Pressable
+              onPress={() => handleShare(item.link)}
+              style={{
+                backgroundColor: theme.icon.share.background,
+                padding: spacing.md,
+                borderRadius: 999,
+              }}
+            >
+              <Ionicons
+                name='share-outline'
+                size={20}
+                color={theme.icon.share.icon}
               />
+            </Pressable>
+          </View>
+        </View>
 
-              <View style={{ alignItems: 'center' }}>
-                <Text style={[typography.h4, { color: theme.text.primary }]}>
-                  {payments.filter((p) => p.status === 'pending').length}
-                </Text>
-                <Text
-                  style={[
-                    typography.bodySmall,
-                    { color: theme.text.secondary },
-                  ]}
-                >
-                  Not Paid
-                </Text>
-              </View>
+        {/* BOTTOM */}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: spacing.lg,
+          }}
+        >
+          <Text style={[typography.h3, { color: theme.text.primary }]}>
+            {formatCurrency(item.amount)}
+          </Text>
+
+          <UICardStatus status={item.status} />
+        </View>
+      </SectionUICard>
+    </SwipeablePaymentCard>
+  );
+
+  return (
+    <DefaultScreenLayout
+      title='Payment Link'
+      subtitle='Generate your payment link'
+      stats={
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+          }}
+        >
+          <Stat label='Total' value={payments.length} />
+          <Divider />
+          <Stat
+            label='Paid'
+            value={payments.filter((p) => p.status === 'success').length}
+          />
+          <Divider />
+          <Stat
+            label='Not Paid'
+            value={payments.filter((p) => p.status === 'pending').length}
+          />
+        </View>
+      }
+    >
+      {/* ✅ FlatList replaces ScrollView */}
+      <FlatList
+        data={filteredPayments}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: spacing.xxl,
+          paddingTop: spacing.xl,
+          paddingBottom: 120,
+          gap: spacing.lg,
+        }}
+        ListHeaderComponent={
+          <>
+            {/* FILTERS */}
+            <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+              {filters.map((item) => (
+                <FilterCard
+                  key={item}
+                  label={item}
+                  active={selected === item}
+                  onPress={() => setSelected(item)}
+                />
+              ))}
             </View>
-          </SectionUICard>
-        </View>
+          </>
+        }
+        ListEmptyComponent={
+          <View
+            style={{
+              marginTop: spacing.xxxl,
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={[
+                typography.h4,
+                { color: theme.text.primary, marginBottom: spacing.sm },
+              ]}
+            >
+              No payment links yet
+            </Text>
 
-        {/* BODY */}
-        <View style={{ padding: spacing.xxl }}>
-          {/* FILTERS */}
-          <View style={{ flexDirection: 'row', gap: 8 }}>
-            {filters.map((item) => (
-              <FilterCard
-                key={item}
-                label={item}
-                active={selected === item}
-                onPress={() => setSelected(item)}
-              />
-            ))}
+            <Text
+              style={[
+                typography.bodySmall,
+                {
+                  color: theme.text.secondary,
+                  textAlign: 'center',
+                },
+              ]}
+            >
+              Create a payment link to get started
+            </Text>
           </View>
-
-          {/* CARDS / EMPTY STATE */}
-          <View style={{ marginTop: spacing.xl, gap: spacing.lg }}>
-            {filteredPayments?.length === 0 ? (
-              <View
-                style={{
-                  marginTop: spacing.xxxl,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Text
-                  style={[
-                    typography.h4,
-                    { color: theme.text.primary, marginBottom: spacing.sm },
-                  ]}
-                >
-                  No payment links yet
-                </Text>
-
-                <Text
-                  style={[
-                    typography.bodySmall,
-                    {
-                      color: theme.text.secondary,
-                      textAlign: 'center',
-                    },
-                  ]}
-                >
-                  Create a payment link to get started
-                </Text>
-
-                {/* <Pressable
-                  onPress={() => navigation.navigate('CreatePaymentLink')}
-                  style={{ marginTop: spacing.lg }}
-                >
-                  <Text style={{ color: theme.text.brand }}>
-                    Create Payment Link
-                  </Text>
-                </Pressable> */}
-              </View>
-            ) : (
-              filteredPayments.map((item) => (
-                <SwipeablePaymentCard
-                  key={item.id}
-                  onDelete={() => {
-                    Alert.alert(
-                      'Delete Payment',
-                      'Are you sure you want to delete this payment link?',
-                      [
-                        { text: 'Cancel', style: 'cancel' },
-                        {
-                          text: 'Delete',
-                          style: 'destructive',
-                          onPress: () => deletePayment(item.id),
-                        },
-                      ],
-                    );
-                  }}
-                >
-                  <SectionUICard key={item.id}>
-                    {/* TOP ROW */}
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      {/* LEFT */}
-                      <View style={{ gap: spacing.xs }}>
-                        <Text
-                          style={[
-                            typography.bodyLargeSemiBold,
-                            { color: theme.text.primary },
-                          ]}
-                        >
-                          {item.title}
-                        </Text>
-
-                        <Text
-                          style={[
-                            typography.bodySmall,
-                            { color: theme.text.secondary },
-                          ]}
-                        >
-                          {item.date}
-                        </Text>
-                      </View>
-
-                      {/* ACTIONS */}
-                      <View style={{ flexDirection: 'row', gap: spacing.md }}>
-                        {/* COPY */}
-                        <Pressable
-                          onPress={() => handleCopy(item.link)}
-                          style={{
-                            backgroundColor: theme.icon.copy.background,
-                            padding: spacing.md,
-                            borderRadius: 999,
-                          }}
-                        >
-                          <Ionicons
-                            name='copy-outline'
-                            size={20}
-                            color={theme.icon.copy.icon}
-                          />
-                        </Pressable>
-
-                        {/* SHARE */}
-                        <Pressable
-                          onPress={() => handleShare(item.link)}
-                          style={{
-                            backgroundColor: theme.icon.share.background,
-                            padding: spacing.md,
-                            borderRadius: 999,
-                          }}
-                        >
-                          <Ionicons
-                            name='share-outline'
-                            size={20}
-                            color={theme.icon.share.icon}
-                          />
-                        </Pressable>
-                      </View>
-                    </View>
-
-                    {/* BOTTOM ROW */}
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginTop: spacing.lg,
-                      }}
-                    >
-                      <Text
-                        style={[typography.h3, { color: theme.text.primary }]}
-                      >
-                        {formatCurrency(item.amount)}
-                      </Text>
-
-                      <UICardStatus status={item.status} />
-                    </View>
-                  </SectionUICard>
-                </SwipeablePaymentCard>
-              ))
-            )}
-          </View>
-        </View>
-      </ScrollView>
+        }
+      />
 
       {/* FAB */}
       <Pressable
         onPress={() => navigation.navigate('CreatePaymentLink')}
-        android_ripple={{ color: '#ffffff30', borderless: true }}
         style={({ pressed }) => [
           {
             position: 'absolute',
-            bottom: insets.bottom + 24,
+            bottom: 24,
             right: spacing.xxl,
             backgroundColor: theme.background.brand,
             width: 56,
@@ -367,13 +261,32 @@ export default function PaymentsScreen({ navigation }) {
             alignItems: 'center',
             justifyContent: 'center',
             elevation: 6,
-            zIndex: 1000,
           },
           pressed && { opacity: 0.8 },
         ]}
       >
         <Ionicons name='add-outline' size={24} color='#1E2A78' />
       </Pressable>
-    </View>
+    </DefaultScreenLayout>
   );
 }
+
+// helpers
+const Stat = ({ label, value }) => (
+  <View style={{ alignItems: 'center' }}>
+    <Text style={[typography.h4, { color: theme.text.primary }]}>{value}</Text>
+    <Text style={[typography.bodySmall, { color: theme.text.secondary }]}>
+      {label}
+    </Text>
+  </View>
+);
+
+const Divider = () => (
+  <View
+    style={{
+      width: 1,
+      height: 40,
+      backgroundColor: theme.border.default,
+    }}
+  />
+);
